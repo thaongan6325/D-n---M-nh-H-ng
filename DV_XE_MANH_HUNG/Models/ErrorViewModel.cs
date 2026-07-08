@@ -1,4 +1,4 @@
-namespace DV_XE_MANH_HUNG.Models
+﻿namespace Vivu_Xe.Models
 {
     public class ErrorViewModel
     {

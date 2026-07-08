@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj": {}
+    "C:\\Users\\NGUYEN NGHIA\\OneDrive\\Desktop\\D-n---M-nh-H-ng\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj": {}
   },
   "projects": {
-    "E:\\XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj": {
+    "C:\\Users\\NGUYEN NGHIA\\OneDrive\\Desktop\\D-n---M-nh-H-ng\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj",
+        "projectUniqueName": "C:\\Users\\NGUYEN NGHIA\\OneDrive\\Desktop\\D-n---M-nh-H-ng\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj",
         "projectName": "DV_XE_MANH_HUNG",
-        "projectPath": "E:\\XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj",
+        "projectPath": "C:\\Users\\NGUYEN NGHIA\\OneDrive\\Desktop\\D-n---M-nh-H-ng\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG.csproj",
         "packagesPath": "C:\\Users\\NGUYEN NGHIA\\.nuget\\packages\\",
-        "outputPath": "E:\\XE_MANH_HUNG\\DV_XE_MANH_HUNG\\DV_XE_MANH_HUNG\\obj\\",
+        "outputPath": "C:\\Users\\NGUYEN NGHIA\\OneDrive\\Desktop\\D-n---M-nh-H-ng\\DV_XE_MANH_HUNG\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +49,32 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Hashids.net": {
+              "target": "Package",
+              "version": "[1.7.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

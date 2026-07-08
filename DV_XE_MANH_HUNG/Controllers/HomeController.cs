@@ -1,21 +1,64 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using DV_XE_MANH_HUNG.Models;
-using Microsoft.AspNetCore.Mvc;
+using Vivu_Xe.Data;
+using Vivu_Xe.Models;
+using Vivu_Xe.Models.ViewModels;
 
-namespace DV_XE_MANH_HUNG.Controllers
+namespace Vivu_Xe.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly VivuXeContext _context; // 1. Khai báo Context
 
-        public HomeController(ILogger<HomeController> logger)
+        // 2. Inject Context vào Constructor
+        public HomeController(ILogger<HomeController> logger, VivuXeContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // 1. Lấy TẤT CẢ xe đang sẵn sàng
+            var allXe = await _context.Xes
+                                     .Include(x => x.HinhAnhXes)
+                                     .Include(x => x.MaLoaiNavigation) // Join bảng Loại xe để lọc tên
+                                     .Where(x => x.TrangThai == "Sẵn sàng")
+                                     .OrderByDescending(x => x.MaXe)
+                                     .ToListAsync();
+
+            // 2. Khởi tạo ViewModel và chia danh sách
+            var model = new HomeViewModel();
+
+            // Lọc lấy 4 xe Ô tô 
+
+            model.DanhSachOto = allXe
+                                .Where(x => x.MaLoaiNavigation.TenLoai.ToLower().Contains("chỗ")) // xe 4 chỗ - xe 7 chỗ
+                                .Take(4)
+                                .ToList();
+
+            model.DanhSachXeMay = allXe
+                                .Where(x => x.MaLoaiNavigation.TenLoai.ToLower().Contains("máy")) // xe máy
+                                .Take(4)
+                                .ToList();
+            // --- LOGIC KIỂM TRA XE ĐÃ THÍCH ---
+            var userId = HttpContext.Session.GetInt32("UserID");
+            var likedCarIds = new List<int>();
+
+            if (userId != null)
+            {
+                // Lấy danh sách ID các xe mà user này đã thích
+                likedCarIds = await _context.XeYeuThiches
+                                    .Where(y => y.MaNguoiDung == userId)
+                                    .Select(y => y.MaXe)
+                                    .ToListAsync();
+            }
+
+            // Truyền danh sách này sang View qua ViewBag
+            ViewBag.LikedCarIds = likedCarIds;
+            return View(model);
         }
 
         public IActionResult Privacy()

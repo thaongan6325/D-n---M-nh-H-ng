@@ -1,49 +1,274 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    // 1. Lấy tên Controller và Action hiện tại từ URL
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+
+    // 2. Hàm hỗ trợ: Trả về chuỗi "active" nếu khớp tên Controller
+    string ActiveClass(string controllerName, string actionName = null)
+    {
+        if (currentController == controllerName)
+        {
+            // Nếu có yêu cầu check thêm Action (dành cho Trang chủ)
+            if (!string.IsNullOrEmpty(actionName) && currentAction != actionName)
+                return "";
+
+            return "active"; // Trả về class active
+        }
+        return "";
+    }
+}
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - DV_XE_MANH_HUNG</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DV_XE_MANH_HUNG.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
+
+
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DV_XE_MANH_HUNG</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    <header class="navbar">
+        <div class="custom-container">
+            <a asp-controller="Home" asp-action="Index" class="navbar-logo">
+                <div class="logo-icon">
+                    <img src="~/images/logo.png" alt="Logo" />
+                </div>
+            </a>
+
+            <nav class="navbar-menu" id="navbar-menu">
+                <ul class="nav-list">
+                    <li>
+                        <a asp-controller="Home" asp-action="Index"
+                           class="nav-link @ActiveClass("Home", "Index")">
+                            Trang chủ
+                        </a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="nav-link @ActiveClass("Xe")">
+                            Danh sách xe
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </a>
+
+                        <ul class="dropdown-menu custom-drop-menu">
+                            <li>
+                                <a asp-controller="Xe" asp-action="Index" class="dropdown-item">
+                                    Tất cả xe
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Xe" asp-action="Index" asp-route-loai="4cho" class="dropdown-item">
+                                    Sedan 4 chỗ
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Xe" asp-action="Index" asp-route-loai="7cho" class="dropdown-item">
+                                    SUV 7 chỗ
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Xe" asp-action="Index" asp-route-loai="xemay" class="dropdown-item">
+                                    Xe máy
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Xe" asp-action="Index" asp-route-nhienlieu="dien" class="dropdown-item">
+                                    Xe điện
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a asp-controller="TinTuc" asp-action="Index"
+                           class="nav-link @ActiveClass("TinTuc")">
+                            Tin tức
+                        </a>
+                    </li>
+                    <li><a href="#" class="nav-link">Giới thiệu</a></li>
+
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UserEmail") != null)
+                    {
+                        /* --- TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP (Logged In) --- */
+                        <li class="dropdown">
+                            <a href="#" class="account-toggle @ActiveClass("Account")">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="user-greeting">Chào, @HttpContextAccessor.HttpContext.Session.GetString("UserName")</span>
+                                <i class="fas fa-chevron-down nav-arrow"></i>
+                            </a>
+
+                            <ul class="dropdown-menu custom-drop-menu">
+                                <li>
+                                    <a asp-controller="Account" asp-action="Profile" class="dropdown-item">
+                                        <i class="fas fa-id-card menu-icon icon-gray"></i> Hồ sơ cá nhân
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Account" asp-action="History" class="dropdown-item">
+                                        <i class="fas fa-history menu-icon icon-gray"></i> Lịch sử chuyến đi
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="XeYeuThich" asp-action="Index" class="dropdown-item">
+                                        <i class="fas fa-heart menu-icon icon-red"></i> Xe yêu thích
+                                    </a>
+                                </li>
+
+                                @if (HttpContextAccessor.HttpContext.Session.GetInt32("RoleID") == 1 || HttpContextAccessor.HttpContext.Session.GetInt32("RoleID") == 2)
+                                {
+                                    <li class="menu-divider"></li>
+                                    <li>
+                                        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="dropdown-item admin-link">
+                                            <i class="fas fa-user-shield menu-icon"></i> Trang quản trị
+                                        </a>
+                                    </li>
+                                }
+
+                                <li class="menu-divider"></li>
+
+                                <li>
+                                    <a asp-controller="Account" asp-action="Logout" class="dropdown-item logout-link">
+                                        <i class="fas fa-sign-out-alt menu-icon"></i> Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    }
+                    else
+                    {
+                        /* --- TRƯỜNG HỢP 2: CHƯA ĐĂNG NHẬP (Guest) --- */
+                        <li class="dropdown">
+                            <a href="#" class="nav-btn-account @ActiveClass("Account")">
+                                <i class="fas fa-user-circle"></i>
+                                <span>Tài khoản</span>
+                                <i class="fas fa-chevron-down nav-arrow"></i>
+                            </a>
+
+                            <ul class="dropdown-menu custom-drop-menu">
+                                <li>
+                                    <a asp-controller="Account" asp-action="Login" class="dropdown-item">
+                                        <i class="fas fa-sign-in-alt menu-icon icon-blue"></i> Đăng nhập
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Account" asp-action="Register" class="dropdown-item">
+                                        <i class="fas fa-user-plus menu-icon icon-green"></i> Đăng ký
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </nav>
+
+            <div class="hamburger" id="hamburger-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer-section">
+        <div class="container custom-container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">
+                        <div class="logo-icon-white"></div>
+                        <span>DỊCH VỤ THUÊ XE Ô TÔ MẠNH HÙNG</span>
+                    </a>
+                    <p class="footer-desc">
+                        Nền tảng thuê xe tự lái uy tín tại Quảng Trị. Đội xe đa dạng, thủ tục nhanh gọn, giá cả minh bạch.
+                    </p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h3 class="footer-title">Chính sách</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Về chúng tôi</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Điều khoản sử dụng</a></li>
+                        <li><a href="#">Quy chế hoạt động</a></li>
+                        <li><a href="#">Giải quyết tranh chấp</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h3 class="footer-title">Hỗ trợ khách hàng</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Hướng dẫn đặt xe</a></li>
+                        <li><a href="#">Hướng dẫn thanh toán</a></li>
+                        <li><a href="#">Kinh nghiệm thuê xe</a></li>
+                        <li><a href="#">Câu hỏi thường gặp (FAQ)</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h3 class="footer-title">Liên hệ</h3>
+                    <ul class="footer-contact">
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Căn Mg01-48 Khu Vincom, Nam Đông Hà, Quảng Trị </span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>0975 820 777</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>manhhung@gmail.com</span>
                         </li>
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - DV_XE_MANH_HUNG - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <p>
+                    Dịch vụ thuê xe ô tô Mạnh Hùng
+                </p>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Kiểm tra xem có thông báo từ Server gửi xuống không
+        @if (TempData["Message"] != null)
+        {
+                <text>
+                document.addEventListener("DOMContentLoaded", function() {
+                    Swal.fire({
+                        title: 'Thông báo',
+                        text: '@Html.Raw(TempData["Message"])',
+                        icon: '@(TempData["Type"] ?? "info")', // error, success, warning...
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Đã hiểu'
+                    })
+                });
+                </text>
+        }
+    </script>
 </body>
 </html>

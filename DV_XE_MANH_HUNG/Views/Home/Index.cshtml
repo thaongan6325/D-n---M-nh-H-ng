@@ -1,8 +1,209 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Vivu_Xe.Models.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Dịch vụ thuê xe Mạnh Hùng";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-banner">
+    <div class="hero-content">
+        <h1>Thuê xe tự lái <br /> dẫn lối tương lai</h1>
+    </div>
+
+    <div class="search-container">
+        <form class="search-box" asp-action="Search" asp-controller="Booking" method="get">
+
+            <div class="search-item">
+                <label>Loại xe</label>
+                <div class="input-group">
+                    <i class="fas fa-car"></i>
+                    <select name="maLoai" class="form-select-custom">
+                        <option value="">Tất cả loại xe</option>
+                        <option value="1">Xe 4 chỗ (Sedan)</option>
+                        <option value="2">Xe 7 chỗ (SUV)</option>
+                        <option value="3">Xe máy</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-item">
+                <label>Ngày nhận xe</label>
+                <div class="input-group">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date"
+                           name="startDate"
+                           value="@(ViewBag.StartDate ?? DateTime.Now.ToString("yyyy-MM-dd"))"
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           required />
+                </div>
+            </div>
+
+            <div class="search-item">
+                <label>Ngày trả xe</label>
+                <div class="input-group">
+                    <i class="fas fa-calendar-check"></i>
+                    <input type="date" name="endDate" required />
+                </div>
+            </div>
+
+            <button type="submit" class="btn-search">TÌM XE NGAY</button>
+        </form>
+    </div>
+</section>
+
+<section class="car-section">
+    <div class="custom-container">
+        <h2 class="section-title">XE Ô TÔ</h2>
+
+        <div class="car-grid">
+            @if (Model.DanhSachOto != null && Model.DanhSachOto.Any())
+            {
+                @foreach (var item in Model.DanhSachOto)
+                {
+                    var anhXe = item.HinhAnhXes.FirstOrDefault()?.DuongDan ?? "/images/no-image.jpg";
+
+                    <article class="car-card">
+                        <div class="card-image">
+                            <img src="@anhXe" alt="@item.TenXe" />
+                            @{
+                                var listLiked = ViewBag.LikedCarIds as List<int>;
+                                // Kiểm tra: Nếu list ko null VÀ có chứa ID xe này -> là Đã thích
+                                bool isLiked = listLiked != null && listLiked.Contains(item.MaXe);
+                                // Kiểm tra xem chuỗi nhiên liệu có chứa chữ "Điện" không
+                                bool isElectric = item.NhienLieu != null && item.NhienLieu.Contains("Điện");
+                                string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
+                            }
+                            <button class="btn-favorite @(isLiked ? "active" : "")" onclick="toggleFavorite(@item.MaXe, this)">
+                                <i class="@(isLiked ? "fas" : "far") fa-heart"></i>
+                            </button>
+                            <span class="badge-feature">
+                                <i class="@fuelIcon"></i> @item.NhienLieu
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="car-name">@item.TenXe</h3>
+                            <p>Màu xe: @item.MauSac</p>
+
+                            <div class="car-price-group">
+                                <span class="current-price">@item.GiaThueNgay.ToString("N0")đ/ngày</span>
+                            </div>
+
+                            <div class="car-specs">
+                                <div class="spec-item"><i class="fas fa-cogs"></i> @item.HopSo</div>
+                                <div class="spec-item"><i class="fas fa-car"></i> @item.MaLoaiNavigation?.TenLoai</div>
+                            </div>
+
+                            <a href="/Xe/Details/@item.MaXe" class="btn-book-now">ĐẶT XE</a>
+                        </div>
+                    </article>
+                }
+            }
+        </div>
+
+        <div class="action-area">
+            <a asp-controller="Xe" asp-action="Index" asp-route-loai="oto" class="btn-see-more">
+                XEM TẤT CẢ Ô TÔ <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="car-section">
+    <div class="custom-container">
+        <h2 class="section-title">XE MÁY</h2>
+
+        <div class="car-grid">
+            @if (Model.DanhSachXeMay != null && Model.DanhSachXeMay.Any())
+            {
+                @foreach (var item in Model.DanhSachXeMay)
+                {
+                    var anhXe = item.HinhAnhXes.FirstOrDefault()?.DuongDan ?? "/images/no-image-bike.png";
+
+                    <article class="car-card">
+                        <div class="card-image">
+                            <img src="@anhXe" alt="@item.TenXe" />
+                            @{
+                                var listLiked = ViewBag.LikedCarIds as List<int>;
+                                // Kiểm tra: Nếu list ko null VÀ có chứa ID xe này -> là Đã thích
+                                bool isLiked = listLiked != null && listLiked.Contains(item.MaXe);
+                                // Kiểm tra xem chuỗi nhiên liệu có chứa chữ "Điện" không
+                                bool isElectric = item.NhienLieu != null && item.NhienLieu.Contains("Điện");
+                                string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
+                            }
+                            <button class="btn-favorite @(isLiked ? "active" : "")" onclick="toggleFavorite(@item.MaXe, this)">
+                                <i class="@(isLiked ? "fas" : "far") fa-heart"></i>
+                            </button>
+                            <span class="badge-feature">
+                                <i class="@fuelIcon"></i> @item.NhienLieu
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="car-name">@item.TenXe</h3>
+                            <p>Màu xe: @item.MauSac</p>
+
+                            <div class="car-price-group">
+                                <span class="current-price">@item.GiaThueNgay.ToString("N0")đ/ngày</span>
+                            </div>
+
+                            <div class="car-specs">
+                                <div class="spec-item"><i class="fas fa-cogs"></i> @item.HopSo</div>
+                                <div class="spec-item"><i class="fas fa-motorcycle"></i> @item.MaLoaiNavigation?.TenLoai</div>
+                            </div>
+
+                            <a href="/Xe/Details/@item.MaXe" class="btn-book-now">ĐẶT XE</a>
+                        </div>
+                    </article>
+                }
+            }
+        </div>
+
+        <div class="action-area">
+            <a asp-controller="Xe" asp-action="Index" asp-route-loai="xemay" class="btn-see-more">
+                XEM TẤT CẢ XE MÁY <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="steps-section">
+    <div class="custom-container">
+        <div class="steps-banner">
+            <div class="overlay"></div>
+
+            <div class="steps-content">
+                <h2 class="steps-title">3 BƯỚC ĐẶT XE TẠI MẠNH HÙNG</h2>
+
+                <div class="steps-grid">
+                    <div class="step-item">
+                        <div class="step-image">
+                            <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop" alt="Bước 1" />
+                        </div>
+                        <p class="step-desc">
+                            <strong>1. Chọn và giữ chỗ</strong>
+                            với hàng trăm xe tại Ô TÔ MẠNH HÙNG
+                        </p>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-image">
+                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&auto=format&fit=crop" alt="Bước 2" />
+                        </div>
+                        <p class="step-desc">
+                            <strong>2. Thủ tục qua app</strong>
+                            nhanh gọn, tiện lợi
+                        </p>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-image">
+                            <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop" alt="Bước 3" />
+                        </div>
+                        <p class="step-desc">
+                            <strong>3. Chủ động nhận xe</strong>
+                            mọi lúc mọi nơi
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
