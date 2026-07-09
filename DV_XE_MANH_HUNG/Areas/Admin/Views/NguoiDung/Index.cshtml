@@ -1,0 +1,175 @@
+﻿@model IEnumerable<Vivu_Xe.Models.NguoiDung>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 text-gray-800">Danh sách Khách hàng</h1>
+    <div>
+        <a href="/Admin/NguoiDung" class="btn btn-outline-secondary btn-sm me-2">Tất cả</a>
+        <a href="/Admin/NguoiDung?status=cho_duyet" class="btn btn-warning btn-sm">
+            <i class="fas fa-filter"></i> Chỉ hiện người chờ duyệt
+        </a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle" id="dataTable" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Họ Tên</th>
+                        <th>Thông tin liên hệ</th>
+                        <th>Giấy tờ</th>
+                        <th>Tài khoản</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var chuaDuyet = item.GiayTos.Count(g => g.DaXacThuc == false);
+                        // Giả định bạn có trường TrangThai. Sửa lại nếu DB bạn dùng tên khác
+                        var isLocked = (item.TrangThai == false);
+
+                        <tr>
+                            <td>#@item.MaNguoiDung</td>
+                            <td><strong>@item.HoTen</strong></td>
+                            <td>
+                                <div><i class="fas fa-envelope text-muted"></i> @item.Email</div>
+                                <div><i class="fas fa-phone text-muted"></i> @item.SoDienThoai</div>
+                            </td>
+                            <td>
+                                @{
+                                    var soLuongChuaDuyet = item.GiayTos.Count(g => g.DaXacThuc == false);
+                                    var coGPLXDuyet = item.GiayTos.Any(g => g.LoaiGiayTo == "GPLX" && g.DaXacThuc == true);
+                                    var coCCCDDuyet = item.GiayTos.Any(g => g.LoaiGiayTo == "CCCD" && g.DaXacThuc == true);
+                                }
+
+                                @if (soLuongChuaDuyet > 0)
+                                {
+                                    <span class="badge bg-info text-dark"><i class="fas fa-spinner fa-spin"></i> @soLuongChuaDuyet chờ duyệt</span>
+                                }
+                                else if (coGPLXDuyet && coCCCDDuyet)
+                                {
+                                    <span class="badge bg-success"><i class="fas fa-check-circle"></i> Đã xác thực đủ</span>
+                                }
+                                else if (item.GiayTos.Count > 0)
+                                {
+                                    <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle"></i> Thiếu giấy tờ</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="fas fa-times-circle"></i> Chưa cập nhật</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(isLocked ? "bg-danger" : "bg-success")" id="status-badge-@item.MaNguoiDung">
+                                    @(isLocked ? "Bị khóa" : "Hoạt động")
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <a href="/Admin/NguoiDung/Details/@item.MaNguoiDung" class="btn btn-info btn-sm text-white shadow-sm" title="Xem chi tiết">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-sm shadow-sm @(isLocked ? "btn-success" : "btn-danger")"
+                                        id="btn-lock-@item.MaNguoiDung"
+                                        title="@(isLocked ? "Mở khóa tài khoản" : "Khóa tài khoản")"
+                                        onclick="toggleUserLock(@item.MaNguoiDung, '@item.HoTen')">
+                                    <i class="fas @(isLocked ? "fa-unlock" : "fa-lock")" id="icon-lock-@item.MaNguoiDung"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function toggleUserLock(userId, userName) {
+            // Lấy trạng thái hiện tại dựa trên class của nút bấm để ra thông báo cho chuẩn
+            const btn = document.getElementById(`btn-lock-${userId}`);
+            const isCurrentlyLocked = btn.classList.contains('btn-success');
+
+            const actionText = isCurrentlyLocked ? "MỞ KHÓA" : "KHÓA";
+            const confirmColor = isCurrentlyLocked ? "#28a745" : "#d33";
+
+            Swal.fire({
+                title: `${actionText} TÀI KHOẢN?`,
+                html: `Bạn có chắc chắn muốn <b>${actionText.toLowerCase()}</b> tài khoản của khách hàng <b>${userName}</b>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: confirmColor,
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: `Vâng, ${actionText.toLowerCase()} ngay!`,
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    // Gọi API cập nhật
+                    fetch(`/Admin/NguoiDung/ToggleLock/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // CẬP NHẬT GIAO DIỆN KHÔNG CẦN LOAD LẠI TRANG
+                            const badge = document.getElementById(`status-badge-${userId}`);
+                            const icon = document.getElementById(`icon-lock-${userId}`);
+
+                            if (data.isLocked) {
+                                // Đổi badge thành Bị Khóa (Đỏ)
+                                badge.className = "badge bg-danger";
+                                badge.innerText = "Bị khóa";
+
+                                // Đổi nút thành Mở Khóa (Xanh)
+                                btn.className = "btn btn-sm shadow-sm btn-success";
+                                btn.title = "Mở khóa tài khoản";
+                                icon.className = "fas fa-unlock";
+                            } else {
+                                // Đổi badge thành Hoạt động (Xanh)
+                                badge.className = "badge bg-success";
+                                badge.innerText = "Hoạt động";
+
+                                // Đổi nút thành Khóa (Đỏ)
+                                btn.className = "btn btn-sm shadow-sm btn-danger";
+                                btn.title = "Khóa tài khoản";
+                                icon.className = "fas fa-lock";
+                            }
+
+                            // Hiện thông báo thành công ở góc màn hình (Toast) cho chuyên nghiệp
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: data.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Lỗi hệ thống!', 'Không thể thực hiện yêu cầu.', 'error');
+                    });
+                }
+            });
+        }
+    </script>
+}

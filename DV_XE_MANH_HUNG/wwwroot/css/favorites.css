@@ -1,0 +1,236 @@
+﻿/* Container chính */
+.fav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* Header */
+.fav-header {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.fav-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e74c3c; /* Màu đỏ của tim */
+    margin: 0 0 5px 0;
+}
+
+.fav-desc {
+    color: #7f8c8d;
+    margin: 0;
+}
+
+/* Grid Layout (Thay thế row/col của Bootstrap) */
+.fav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Tự động chia cột */
+    gap: 30px;
+}
+
+/* Card Xe */
+.fav-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+    position: relative; /* Để định vị nút xóa */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+    .fav-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+/* Nút xóa nhanh (X) */
+.btn-remove-fav {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: #e74c3c;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 2;
+    transition: all 0.2s;
+}
+
+    .btn-remove-fav:hover {
+        background: #e74c3c;
+        color: white;
+    }
+
+/* Ảnh xe */
+.fav-img-wrap {
+    height: 180px;
+    width: 100%;
+    background-color: #eee;
+}
+
+.fav-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Loại xe (Badge) */
+.car-type-badge {
+    position: absolute;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    font-size: 12px;
+    z-index: 2;
+}
+
+/* Body Card */
+.fav-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.fav-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fav-plate {
+    font-size: 13px;
+    color: #95a5a6;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.fav-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+.price-val {
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Footer Card */
+.fav-footer {
+    padding: 15px 20px;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+}
+
+.btn-book {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    margin-top: 15px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2980b9 100%);
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+    .btn-book:hover {
+        background: linear-gradient(135deg, #024b85 0%, var(--primary-color) 100%);
+    }
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 0;
+    color: #7f8c8d;
+}
+
+.empty-icon {
+    font-size: 60px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+    .btn-home:hover {
+        background-color: #2980b9;
+    }
+.btn-disabled {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #95a5a6; /* Màu xám */
+    color: white;
+    text-decoration: none;
+    padding: 12px 0;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: not-allowed; /* Con trỏ chuột báo không bấm được */
+    opacity: 0.8;
+}
+
+/* Badge trạng thái nhỏ trên hình ảnh (Optional - để dễ nhìn hơn) */
+.status-tag {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.tag-busy {
+    background-color: #e74c3c;
+}
+/* Đỏ: Đang thuê */
+.tag-fixing {
+    background-color: #f39c12;
+}
+/* Cam: Bảo dưỡng */

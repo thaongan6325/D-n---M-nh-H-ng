@@ -1,0 +1,146 @@
+﻿/* --- 1. KHUNG CHỨA FORM TÌM KIẾM --- */
+.hero-search-wrapper {
+    /* Thay thế style inline: min-height: 300px; margin-top:0 */
+    min-height: 300px;
+    margin-top: 0;
+    display: flex;
+    align-items: center; /* Căn giữa dọc */
+    justify-content: center;
+    background-color: #f8f9fa; /* Màu nền nhẹ nếu ảnh chưa load */
+}
+
+.search-result-container {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Bóng đổ tự nhiên */
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    margin-bottom: 0;
+    position: relative; /* Bắt buộc phải có để z-index hoạt động */
+    z-index: 100;
+}
+
+/* --- 2. FORM DÀN NGANG (FLEXBOX) --- */
+.search-form-flex {
+    display: flex;
+    align-items: flex-end; /* Căn đáy để nút và ô nhập thẳng hàng */
+    gap: 25px; /* Khoảng cách giữa các ô */
+    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+}
+
+/* Từng ô tìm kiếm con */
+.search-field-item {
+    flex: 1; /* Chia đều không gian */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px; /* Chiều rộng tối thiểu */
+}
+
+    .search-field-item label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+/* Khung nhập liệu (Input Wrapper) */
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #e0e0e0; /* Kẻ đường line dưới chân */
+    padding-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+    /* Hiệu ứng khi bấm vào (Focus) */
+    .custom-input-group:focus-within {
+        border-bottom-color: var(--primary-color); /* Đổi màu line khi nhập */
+    }
+
+    .custom-input-group i {
+        color: var(--primary-color);
+        font-size: 18px;
+        min-width: 24px;
+    }
+
+/* Ô nhập liệu & Select */
+.search-input-field,
+.search-select-field {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    background: transparent;
+    padding: 0;
+    font-family: inherit;
+}
+
+.search-select-field {
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* --- 3. NÚT TÌM KIẾM --- */
+.btn-search-submit {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0 35px; /* Padding trái phải */
+    height: 45px; /* Chiều cao cố định bằng ô nhập */
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap; /* Không xuống dòng chữ */
+}
+
+    .btn-search-submit:hover {
+        background-color: #034c85; /* Màu tối hơn khi hover */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(3, 95, 165, 0.3);
+    }
+
+/* --- 4. TIÊU ĐỀ KẾT QUẢ (Thay thế bootstrap classes) --- */
+.result-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.result-title {
+    color: var(--primary-color);
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.result-subtitle {
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #ff0000;
+}
+
+/* --- 5. RESPONSIVE (MOBILE) --- */
+@media (max-width: 768px) {
+    .search-form-flex {
+        flex-direction: column; /* Xếp dọc */
+        gap: 20px;
+    }
+
+    .search-field-item,
+    .btn-search-submit {
+        width: 100%; /* Full màn hình */
+    }
+}

@@ -1,0 +1,155 @@
+﻿@model Vivu_Xe.Models.Xe
+@{
+    ViewData["Title"] = "Xác nhận đặt xe";
+    var user = ViewBag.User as Vivu_Xe.Models.NguoiDung;
+
+    // Format tiền
+    System.Globalization.CultureInfo viVN = new System.Globalization.CultureInfo("vi-VN");
+    string FormatTien(decimal? tien) => string.Format(viVN, "{0:c0}", tien).Replace("₫", "đ");
+}
+
+<link rel="stylesheet" href="~/css/booking.css" asp-append-version="true" />
+
+<div class="booking-page-container">
+
+    <div class="progress-bar">
+        <div class="step completed"><div class="step-icon"><i class="fas fa-search"></i></div><div class="step-text">Tìm xe</div></div>
+        <div class="line completed"></div>
+        <div class="step active"><div class="step-icon"><i class="fas fa-car"></i></div><div class="step-text">Đặt xe</div></div>
+        <div class="line"></div>
+        <div class="step"><div class="step-icon"><i class="far fa-credit-card"></i></div><div class="step-text">Thanh toán</div></div>
+        <div class="line"></div>
+        <div class="step"><div class="step-icon"><i class="fas fa-check"></i></div><div class="step-text">Hoàn tất</div></div>
+    </div>
+
+    <form asp-action="ConfirmBooking" asp-controller="Booking" method="post">
+
+        <input type="hidden" name="MaXe" value="@Model.MaXe" />
+        <input type="hidden" name="NgayNhan" value="@ViewBag.StartDate" />
+        <input type="hidden" name="NgayTra" value="@ViewBag.EndDate" />
+        <div class="booking-layout">
+
+            <div class="col-left">
+                <div class="booking-box">
+                    <h2 class="box-title">Thông tin người đặt</h2>
+
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên</label>
+                        <input type="text" name="HoTen" class="form-input" value="@user?.HoTen" readonly style="background: #f0f0f0; color: #555;">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="tel" name="SoDienThoai" class="form-input" value="@user?.SoDienThoai" readonly style="background: #f0f0f0; color: #555;">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nơi giao xe </label>
+                        <input type="text" name="DiaChiGiaoXe" class="form-input" placeholder="Nhập địa chỉ bạn muốn nhận xe...">
+                        <span class="address-note">*Nếu để trống mục này, Khách hàng sẽ tự đến cửa hàng nhận xe.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email nhận vé</label>
+                        <input type="email" class="form-input" value="@user?.Email" readonly style="background: #f0f0f0; color: #555;">
+                    </div>
+                </div>
+
+                <div class="booking-box">
+                    <h2 class="box-title">Phương thức thanh toán</h2>
+                    <label class="payment-method-item selected">
+                        <input type="radio" name="PaymentMethod" value="Banking" hidden checked>
+                        <div class="radio-mark"></div>
+                        <i class="fas fa-university pm-icon"></i>
+                        <span class="pm-text">Chuyển khoản ngân hàng (QR Code)</span>
+                    </label>
+
+                    <label class="payment-method-item">
+                        <input type="radio" name="PaymentMethod" value="Visa" hidden>
+                        <div class="radio-mark"></div>
+                        <i class="fab fa-cc-visa pm-icon"></i>
+                        <span class="pm-text">Thẻ Visa / Mastercard</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-right">
+                <div class="booking-box" style="border-top: 4px solid var(--primary-color);">
+                    <h2 class="box-title">Đơn hàng</h2>
+
+                    <div class="order-info-row">
+                        <i class="fas fa-car order-info-icon"></i>
+                        <div class="order-info-text">
+                            <strong>@Model.TenXe</strong>
+                            <p>@Model.MauSac, @Model.HopSo</p>
+                        </div>
+                    </div>
+
+                    <div class="order-info-row">
+                        <i class="far fa-calendar-alt order-info-icon"></i>
+                        <div class="order-info-text">
+                            <strong>Thời gian thuê</strong>
+                            <p>@ViewBag.StartDate.ToString("HH:mm dd/MM") - @ViewBag.EndDate.ToString("HH:mm dd/MM")</p>
+                        </div>
+                    </div>
+
+                    <div class="price-table">
+                        <div class="price-row">
+                            <span>Phí thuê xe</span>
+                            <span>@FormatTien(ViewBag.PhiThueXe)</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Phí bảo hiểm</span>
+                            <span>@FormatTien(ViewBag.PhiBaoHiem)</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Tổng tiền thuê</span>
+                            <span>@FormatTien(ViewBag.TongTienThue)</span>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size:15px; font-weight:700; margin-bottom:15px; color:#333;">Lộ trình thanh toán</h3>
+
+                    <div class="payment-route">
+                        <div class="route-step">
+                            <div class="route-header">
+                                <span>1. Thanh toán giữ chỗ</span>
+                                <span class="route-amount">@FormatTien(ViewBag.TienGiuCho)</span>
+                            </div>
+                            <p class="route-desc">Thanh toán ngay bước sau để xác nhận đơn.</p>
+                        </div>
+
+                        <div class="route-step">
+                            <div class="route-header">
+                                <span>2. Thanh toán khi nhận xe</span>
+                                <span class="route-amount" style="font-size:16px;">@FormatTien(ViewBag.TienThanhToanSau + ViewBag.TienCocXe)</span>
+                            </div>
+                            <div class="sub-row">
+                                <span>Tiền thuê còn lại:</span>
+                                <span>@FormatTien(ViewBag.TienThanhToanSau)</span>
+                            </div>
+                            <div class="sub-row">
+                                <span>Cọc xe (Hoàn lại):</span>
+                                <span>@FormatTien(ViewBag.TienCocXe)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-confirm">Xác nhận & Thanh toán</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<script>
+    // Script UI giữ nguyên
+    document.querySelectorAll('.payment-method-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method-item').forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+            this.querySelector('input').checked = true;
+        });
+    });
+</script>

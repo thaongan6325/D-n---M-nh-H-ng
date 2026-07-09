@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Vivu_Xe.Models.DanhMucTin>
+
+@{
+    ViewData["Title"] = "Quản lý Danh mục Tin tức";
+}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Danh mục Bài viết</h1>
+    <a asp-action="Create" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50"></i> Thêm danh mục
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>Tên Danh Mục</th>
+                        <th>Mô tả</th>
+                        <th class="text-center">Số bài viết</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.MaDanhMuc</td>
+                            <td><strong class="text-primary">@item.TenDanhMuc</strong></td>
+                            <td class="text-muted">@item.MoTa</td>
+                            <td class="text-center">
+                                <span class="badge bg-info text-dark">@item.TinTucs.Count bài</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           @(item.TrangThai == true ? "checked" : "")
+                                           onclick="toggleCatStatus(@item.MaDanhMuc)">
+                                    <label class="form-check-label small">@(item.TrangThai == true ? "Hiện" : "Ẩn")</label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@item.MaDanhMuc" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" onclick="confirmDelete(@item.MaDanhMuc, @item.TinTucs.Count)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<form id="deleteForm" method="post" asp-action="Delete">
+    <input type="hidden" name="id" id="deleteId" />
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function toggleCatStatus(id) {
+            fetch(`/Admin/DanhMucTin/ToggleStatus/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    location.reload(); // Tải lại trang để cập nhật nhãn
+                }
+            });
+        }
+
+        function confirmDelete(id, count) {
+            if (count > 0) {
+                Swal.fire('Không thể xóa!', `Danh mục này đang chứa ${count} bài viết. Bạn cần xóa các bài viết trước.`, 'error');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Bạn chắc chắn muốn xóa?',
+                text: "Hành động này không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Xóa ngay',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteId').value = id;
+                    document.getElementById('deleteForm').submit();
+                }
+            })
+        }
+    </script>
+}

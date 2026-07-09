@@ -1,0 +1,182 @@
+﻿@model Vivu_Xe.Models.Xe
+
+@{
+    ViewData["Title"] = "Cập nhật Xe";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Sửa thông tin xe: <span class="text-primary">@Model.TenXe</span></h1>
+        <a asp-action="Index" class="btn btn-secondary btn-sm shadow-sm">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="MaXe" />
+                <input type="hidden" asp-for="NgayTao" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="TenXe" class="control-label fw-bold">Tên Xe</label>
+                            <input asp-for="TenXe" class="form-control" required />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="BienSo" class="control-label fw-bold">Biển Số</label>
+                            <input asp-for="BienSo" class="form-control" required />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="MaHang" class="control-label fw-bold">Hãng Xe</label>
+                            <select asp-for="MaHang" class="form-control" asp-items="ViewBag.MaHang"></select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="MaLoai" class="control-label fw-bold">Loại Xe</label>
+                            <select asp-for="MaLoai" class="form-control" asp-items="ViewBag.MaLoai"></select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 form-group mb-3">
+                                <label asp-for="MauSac" class="control-label fw-bold">Màu Sắc</label>
+                                <input asp-for="MauSac" class="form-control" />
+                            </div>
+                            <div class="col-6 form-group mb-3">
+                                <label asp-for="NamSanXuat" class="control-label fw-bold">Năm SX</label>
+                                <input asp-for="NamSanXuat" type="number" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-6 form-group mb-3">
+                                <label asp-for="HopSo" class="control-label fw-bold">Hộp Số</label>
+                                <select asp-for="HopSo" class="form-control">
+                                    <option value="Tự động">Tự động</option>
+                                    <option value="Số sàn">Số sàn</option>
+                                </select>
+                            </div>
+                            <div class="col-6 form-group mb-3">
+                                <label asp-for="NhienLieu" class="control-label fw-bold">Nhiên Liệu</label>
+                                <select asp-for="NhienLieu" class="form-control">
+                                    <option value="Xăng">Xăng</option>
+                                    <option value="Dầu">Dầu (Diesel)</option>
+                                    <option value="Điện">Điện</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 form-group mb-3">
+                                <label asp-for="GiaThueNgay" class="control-label fw-bold">Giá Thuê/Ngày</label>
+                                <input asp-for="GiaThueNgay" type="number" class="form-control" required />
+                            </div>
+                            <div class="col-6 form-group mb-3">
+                                <label asp-for="TienCoc" class="control-label fw-bold">Tiền Cọc</label>
+                                <input asp-for="TienCoc" type="number" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="TrangThai" class="control-label fw-bold">Trạng Thái</label>
+                            <select asp-for="TrangThai" class="form-control">
+                                <option value="Sẵn sàng">Sẵn sàng (Cho thuê)</option>
+                                <option value="Đang thuê">Đang thuê</option>
+                                <option value="Bảo dưỡng">Bảo dưỡng</option>
+                                <option value="Ngưng hoạt động">Ngưng hoạt động</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3 p-3 bg-light border rounded">
+                            <label class="control-label fw-bold text-success"><i class="fas fa-plus-circle"></i> Tải THÊM ảnh mới</label>
+                            <input type="file" name="uploadHinhAnhs" multiple accept="image/*" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="MoTa" class="control-label fw-bold">Mô Tả Chi Tiết</label>
+                    <textarea asp-for="MoTa" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="control-label fw-bold"><i class="fas fa-images"></i> Các hình ảnh hiện tại</label>
+                    <div class="row">
+                        @if (Model.HinhAnhXes != null && Model.HinhAnhXes.Any())
+                        {
+                            foreach (var item in Model.HinhAnhXes)
+                            {
+                                // Gán id duy nhất cho div chứa ảnh để dùng JS ẩn đi khi xóa thành công
+                                <div class="col-md-2 col-sm-4 mb-3 position-relative" id="img-box-@item.MaHinh">
+                                    <img src="@item.DuongDan" class="img-thumbnail" style="width:100%; height:120px; object-fit:cover;" />
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute"
+                                            style="top: 5px; right: 20px;"
+                                            onclick="deleteImage(@item.MaHinh)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-12"><p class="text-muted fst-italic">Chưa có hình ảnh nào.</p></div>
+                        }
+                    </div>
+                </div>
+
+                <hr />
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5"><i class="fas fa-save"></i> Cập Nhật Dữ Liệu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Hàm gọi API xóa ảnh không cần tải lại trang
+        function deleteImage(imgId) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Ảnh sẽ bị xóa vĩnh viễn khỏi hệ thống!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Đồng ý xóa!',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Gửi request POST tới Controller API
+                    fetch(`/Admin/Xe/DeleteImage/${imgId}`, {
+                        method: 'POST',
+                        headers: {
+                            // Gửi kèm AntiForgeryToken để bảo mật
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Xóa thẻ div chứa hình ảnh khỏi giao diện
+                            document.getElementById(`img-box-${imgId}`).remove();
+                            Swal.fire('Đã xóa!', 'Hình ảnh đã được xóa thành công.', 'success');
+                        } else {
+                            Swal.fire('Lỗi!', 'Không thể xóa ảnh lúc này.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Lỗi!', 'Đã xảy ra lỗi hệ thống.', 'error');
+                    });
+                }
+            })
+        }
+    </script>
+}

@@ -1,0 +1,65 @@
+﻿@model Vivu_Xe.Models.NguoiDung
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-image-side" style="background-image: url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop');">
+            <div class="auth-image-text">
+                <h2>Bắt đầu hành trình</h2>
+                <p>Tạo tài khoản để trải nghiệm dịch vụ thuê xe tự lái tốt nhất.</p>
+            </div>
+        </div>
+
+        <div class="auth-form-side">
+            <h3 class="auth-title">Đăng ký thành viên</h3>
+            <p class="auth-subtitle">Nhập thông tin của bạn để tạo tài khoản mới.</p>
+
+            <form asp-action="Register">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-group">
+                    <label class="form-label-custom">Họ và Tên</label>
+                    <input asp-for="HoTen" class="form-control-custom" placeholder="Nhập họ tên của bạn..." required />
+                    <span asp-validation-for="HoTen" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label-custom">Email</label>
+                    <input asp-for="Email" type="email" class="form-control-custom" placeholder="Nhập email của bạn..." required />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label-custom">Số điện thoại</label>
+                    <input asp-for="SoDienThoai" class="form-control-custom" placeholder="Số điện thoại của bạn..." required />
+                    <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label-custom">Mật khẩu</label>
+                            <input asp-for="MatKhau" type="password" class="form-control-custom" placeholder="******" required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label-custom">Nhập lại mật khẩu</label>
+                            <input name="XacNhanMatKhau" type="password" class="form-control-custom" placeholder="******" required />
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="MatKhau" class="text-danger small d-block mb-2"></span>
+
+                <button type="submit" class="btn-auth">Tạo Tài Khoản</button>
+
+                <div class="auth-footer">
+                    <span class="text-muted small">Đã có tài khoản?</span>
+                    <a asp-action="Login" class="fw-bold text-decoration-none" style="color: var(--primary-color);">Đăng nhập</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

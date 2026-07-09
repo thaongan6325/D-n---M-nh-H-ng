@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Vivu_Xe.Models.Xe>
+
+@{
+    ViewData["Title"] = ViewBag.PageTitle;
+}
+
+<link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
+
+<section class="category-header-section">
+    <div class="custom-container">
+        <h1 class="category-title">@ViewBag.PageTitle</h1>
+
+        <nav class="breadcrumb-nav">
+            <a href="/" class="breadcrumb-link">Trang chủ</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Danh sách xe</span>
+        </nav>
+    </div>
+</section>
+
+<section class="car-section">
+    <div class="custom-container">
+
+        <div class="car-grid">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    var anhXe = item.HinhAnhXes.FirstOrDefault()?.DuongDan ?? "/images/no-image.jpg";
+
+                    
+                    bool isElectric = item.NhienLieu != null && item.NhienLieu.Contains("Điện");
+                    string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
+
+                    var listLiked = ViewBag.LikedCarIds as List<int>;
+                    bool isLiked = listLiked != null && listLiked.Contains(item.MaXe);
+
+                    <article class="car-card">
+                        <div class="card-image">
+                            <img src="@anhXe" alt="@item.TenXe" />
+
+                            <button class="btn-favorite @(isLiked ? "active" : "")" onclick="toggleFavorite(@item.MaXe, this)">
+                                <i class="@(isLiked ? "fas" : "far") fa-heart"></i>
+                            </button>
+
+                            <span class="badge-feature">
+                                <i class="@fuelIcon"></i> @item.NhienLieu
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <h3 class="car-name">@item.TenXe</h3>
+                            <p>Màu xe: @item.MauSac</p>
+
+                            <div class="car-price-group">
+                                <span class="current-price">@item.GiaThueNgay.ToString("N0")đ/ngày</span>
+                            </div>
+
+                            <div class="car-specs">
+                                <div class="spec-item"><i class="fas fa-cogs"></i> @item.HopSo</div>
+                                <div class="spec-item"><i class="fas fa-car"></i> @item.MaLoaiNavigation?.TenLoai</div>
+                            </div>
+
+                            <a href="/Xe/Details/@item.MaXe" class="btn-book-now">ĐẶT XE</a>
+                        </div>
+                    </article>
+                }
+            }
+            else
+            {
+                /* --- TRƯỜNG HỢP KHÔNG CÓ XE (EMPTY STATE) --- */
+                <div class="empty-state-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" class="empty-icon" alt="Empty" />
+                    <h4 class="empty-title">Chưa có xe nào trong danh mục này!</h4>
+                    <p class="empty-desc">Chúng tôi đang cập nhật thêm xe mới, vui lòng quay lại sau.</p>
+                    <a href="/" class="btn-back-home">VỀ TRANG CHỦ</a>
+                </div>
+            }
+        </div>
+    </div>
+</section>

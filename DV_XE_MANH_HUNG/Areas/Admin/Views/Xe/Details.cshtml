@@ -1,0 +1,127 @@
+﻿@model Vivu_Xe.Models.Xe
+
+@{
+    ViewData["Title"] = "Chi tiết xe " + Model.TenXe;
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Thông tin chi tiết: <span class="text-primary">@Model.TenXe</span></h1>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.MaXe" class="btn btn-primary btn-sm shadow-sm">
+                <i class="fas fa-edit"></i> Chỉnh sửa
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm shadow-sm">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thông số và Mô tả</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted">Biển số xe:</div>
+                        <div class="col-sm-8 text-dark fw-bold">@Model.BienSo</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted">Hãng xe / Loại xe:</div>
+                        <div class="col-sm-8">@Model.MaHangNavigation?.TenHang / @Model.MaLoaiNavigation?.TenLoai</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted">Màu sắc / Năm SX:</div>
+                        <div class="col-sm-8">@Model.MauSac / @Model.NamSanXuat</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted">Hộp số / Nhiên liệu:</div>
+                        <div class="col-sm-8">@Model.HopSo / @Model.NhienLieu</div>
+                    </div>
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted">Giá thuê/ngày:</div>
+                        <div class="col-sm-8 text-success fw-bold">@Model.GiaThueNgay.ToString("N0") đ</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 fw-bold text-muted">Tiền cọc yêu cầu:</div>
+                        <div class="col-sm-8 text-danger fw-bold">@Model.TienCoc?.ToString("N0") đ</div>
+                    </div>
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-sm-12 fw-bold text-muted mb-2">Mô tả chi tiết:</div>
+                        <div class="col-sm-12">
+                            <p class="text-justify">@Model.MoTa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Bộ sưu tập hình ảnh (@Model.HinhAnhXes.Count)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @if (Model.HinhAnhXes != null && Model.HinhAnhXes.Any())
+                        {
+                            foreach (var hinh in Model.HinhAnhXes)
+                            {
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="@hinh.DuongDan" target="_blank">
+                                        <img src="@hinh.DuongDan" class="img-thumbnail" style="width:100%; height:150px; object-fit:cover;" />
+                                    </a>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-12 text-center py-4">
+                                <i class="fas fa-image fa-3x text-gray-300 mb-2"></i>
+                                <p class="text-muted">Chưa có hình ảnh nào cho xe này.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Trạng thái hệ thống</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <label class="small fw-bold text-muted">Trạng thái hiện tại:</label>
+                        <div class="mt-1">
+                            @{
+                                string badgeClass = Model.TrangThai == "Sẵn sàng" ? "bg-success" :
+                                Model.TrangThai == "Đang thuê" ? "bg-primary" : "bg-warning";
+                            }
+                            <span class="badge @badgeClass p-2 w-100 fs-6">
+                                <i class="fas fa-info-circle"></i> @Model.TrangThai
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mb-4 text-center">
+                        <label class="small fw-bold text-muted">QR Code xe (Giả định):</label>
+                        <div class="p-3 border rounded bg-light">
+                            <i class="fas fa-qrcode fa-5x text-dark"></i>
+                        </div>
+                    </div>
+                    <div class="text-xs text-muted">
+                        <div><i class="fas fa-calendar-alt"></i> Ngày tạo: @Model.NgayTao?.ToString("dd/MM/yyyy HH:mm")</div>
+                        <div><i class="fas fa-id-card"></i> ID Hệ thống: #@Model.MaXe</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-lightbulb"></i> <strong>Mẹo:</strong> Bạn có thể kiểm tra trạng thái xe "Đang thuê" để biết khi nào xe được trả trong bảng <b>Đơn đặt xe</b>.
+            </div>
+        </div>
+    </div>
+</div>

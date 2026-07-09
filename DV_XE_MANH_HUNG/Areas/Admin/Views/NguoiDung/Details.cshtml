@@ -1,0 +1,183 @@
+﻿@model Vivu_Xe.Models.NguoiDung
+
+@{
+    ViewData["Title"] = "Hồ sơ: " + Model.HoTen;
+}
+<div class="mb-3">
+    <a href="/Admin/NguoiDung" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i> Quay lại
+    </a>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3 bg-primary text-white">
+                <h6 class="m-0 font-weight-bold">Thông tin khách hàng</h6>
+                
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-circle fa-5x text-gray-300"></i>
+                </div>
+                <h4>@Model.HoTen</h4>
+                <p class="text-muted">Thành viên từ: @Model.NgayTao?.ToString("dd/MM/yyyy")</p>
+                <hr>
+                <div class="text-start">
+                    <p><i class="fas fa-envelope me-2"></i> @Model.Email</p>
+                    <p><i class="fas fa-phone me-2"></i> @Model.SoDienThoai</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> @(Model.DiaChi ?? "Chưa cập nhật")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Danh sách giấy tờ xác thực</h6>
+                <span class="badge bg-secondary">Tổng: @Model.GiayTos.Count</span>
+            </div>
+            <div class="card-body">
+                @if (Model.GiayTos.Count == 0)
+                {
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-triangle"></i> Khách hàng chưa tải lên giấy tờ nào.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="15%">Loại</th>
+                                    <th width="20%">Số giấy tờ</th>
+                                    <th width="40%">Hình ảnh (Click để xem)</th>
+                                    <th width="25%">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var doc in Model.GiayTos)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-primary">@doc.LoaiGiayTo</td>
+                                        <td>@doc.SoGiayTo</td>
+
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                @if (!string.IsNullOrEmpty(doc.AnhMatTruoc))
+                                                {
+                                                    <div class="text-center">
+                                                        <a href="@doc.AnhMatTruoc" target="_blank" title="Xem ảnh lớn">
+                                                            <img src="@doc.AnhMatTruoc" class="img-thumbnail"
+                                                                 style="height: 80px; width: 120px; object-fit: cover; cursor: zoom-in;" />
+                                                        </a>
+                                                        <div class="small text-muted mt-1">Mặt trước</div>
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(doc.AnhMatSau))
+                                                {
+                                                    <div class="text-center">
+                                                        <a href="@doc.AnhMatSau" target="_blank" title="Xem ảnh lớn">
+                                                            <img src="@doc.AnhMatSau" class="img-thumbnail"
+                                                                 style="height: 80px; width: 120px; object-fit: cover; cursor: zoom-in;" />
+                                                        </a>
+                                                        <div class="small text-muted mt-1">Mặt sau</div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </td>
+
+                                        <td class="text-center">
+                                            @if (doc.DaXacThuc == true)
+                                            {
+                                                <div class="text-success fw-bold border border-success p-2 rounded bg-light">
+                                                    <i class="fas fa-check-circle"></i> ĐÃ DUYỆT
+                                                </div>
+                                                <small class="text-muted d-block mt-1">Hợp lệ</small>
+                                            }
+                                            else
+                                            {
+                                                <button onclick="approveDoc(@doc.MaGiayTo)" class="btn btn-success w-100 mb-2">
+                                                    <i class="fas fa-check"></i> DUYỆT
+                                                </button>
+
+                                                <button onclick="rejectDoc(@doc.MaGiayTo)" class="btn btn-outline-danger btn-sm w-100">
+                                                    <i class="fas fa-times"></i> Từ chối
+                                                </button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function approveDoc(id) {
+        if (confirm('Bạn đã kiểm tra kỹ hình ảnh và xác nhận giấy tờ này HỢP LỆ?')) {
+
+            // Hiệu ứng loading nút bấm (UX)
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+
+            fetch('/Admin/NguoiDung/ApproveDocument/' + id, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Không cần alert phiền phức, reload luôn
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + data.message);
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Có lỗi kết nối server.');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+        }
+    }
+    function rejectDoc(id) {
+        if (confirm('Bạn chắc chắn muốn TỪ CHỐI? Giấy tờ này sẽ bị xóa khỏi hệ thống để yêu cầu khách hàng upload lại!')) {
+
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xóa...';
+
+            fetch('/Admin/NguoiDung/RejectDocument/' + id, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + data.message);
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Có lỗi kết nối server.');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+        }
+    }
+</script>

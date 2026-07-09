@@ -38,11 +38,6 @@ namespace Vivu_Xe.Controllers
                                 .Where(x => x.MaLoaiNavigation.TenLoai.ToLower().Contains("chỗ")) // xe 4 chỗ - xe 7 chỗ
                                 .Take(4)
                                 .ToList();
-
-            model.DanhSachXeMay = allXe
-                                .Where(x => x.MaLoaiNavigation.TenLoai.ToLower().Contains("máy")) // xe máy
-                                .Take(4)
-                                .ToList();
             // --- LOGIC KIỂM TRA XE ĐÃ THÍCH ---
             var userId = HttpContext.Session.GetInt32("UserID");
             var likedCarIds = new List<int>();

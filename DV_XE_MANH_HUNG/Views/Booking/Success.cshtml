@@ -1,0 +1,81 @@
+﻿@model Vivu_Xe.Models.DonDatXe
+@{
+    ViewData["Title"] = "Đặt xe thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/booking.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/success.css" asp-append-version="true" />
+<div class="booking-page-container">
+    <div class="progress-bar">
+        <div class="step completed"><div class="step-icon"><i class="fas fa-search"></i></div><div class="step-text">Tìm xe</div></div>
+        <div class="line completed"></div>
+        <div class="step completed"><div class="step-icon"><i class="fas fa-file-signature"></i></div><div class="step-text">Đặt xe</div></div>
+        <div class="line completed"></div>
+        <div class="step completed"><div class="step-icon"><i class="fas fa-qrcode"></i></div><div class="step-text">Thanh toán</div></div>
+        <div class="line completed"></div>
+        <div class="step completed"><div class="step-icon"><i class="fas fa-check"></i></div><div class="step-text">Hoàn tất</div></div>
+    </div>
+
+    <div class="success-card">
+        <i class="fas fa-check-circle success-icon-large"></i>
+
+        <h2 class="success-title">Đặt xe thành công!</h2>
+        <p class="success-desc">
+            Cảm ơn bạn đã tin tưởng Vivu Xe. Yêu cầu đặt xe của bạn đã được xác nhận.
+        </p>
+
+        <div class="order-info-box">
+            <div class="order-id-row">
+                <span style="color: #777;">Mã đơn hàng:</span>
+                <span class="order-id-text">ORD#@Model.MaDon</span>
+            </div>
+
+            <div class="car-info-row">
+                @if (Model.MaXeNavigation?.HinhAnhXes?.FirstOrDefault() != null)
+                {
+                    <img src="@Model.MaXeNavigation.HinhAnhXes.FirstOrDefault().DuongDan" class="car-thumb" alt="Car Image" />
+                }
+                else
+                {
+                    <img src="/images//no-image.jpg" class="car-thumb" alt="No Image" />
+                }
+
+                <div>
+                    <div class="car-name">@Model.MaXeNavigation?.TenXe</div>
+                    <div class="rental-time">
+                        @Model.NgayNhanDuKien.ToString("HH:mm, dd/MM") - @Model.NgayTraDuKien.ToString("HH:mm, dd/MM")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-list">
+            <div class="guide-title">
+                👉 Việc cần làm tiếp theo:
+            </div>
+            <div class="guide-item">
+                <i class="fas fa-phone-alt"></i>
+                <span>Nhân viên sẽ liên hệ với bạn trong vòng <strong>30 phút</strong> để xác nhận giao xe.</span>
+            </div>
+            <div class="guide-item">
+                <i class="fas fa-id-card"></i>
+                <span>Vui lòng mang theo <strong>CCCD & GPLX</strong> khi nhận xe.</span>
+            </div>
+            <div class="guide-item">
+                <i class="fas fa-envelope"></i>
+                <span>Vé điện tử đã được gửi tới email <strong>@(Model.MaNguoiDungNavigation?.Email ?? "khachhang@gmail.com")</strong>.</span>
+            </div>
+        </div>
+
+        <div class="btn-action-group">
+            <a asp-controller="Home" asp-action="Index" class="btn-home">
+                Về trang chủ
+            </a>
+            <a asp-controller="Account" asp-action="History" class="btn-manage">
+                Quản lý chuyến đi
+            </a>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />

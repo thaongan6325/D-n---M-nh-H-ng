@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Vivu_Xe.Models.XeYeuThich>
+@{
+    ViewData["Title"] = "Xe Yêu Thích";
+    <link rel="stylesheet" href="~/css/favorites.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+}
+
+<div class="fav-container">
+    <div class="fav-header">
+        <h2 class="fav-title"><i class="fas fa-heart"></i> Xe Yêu Thích</h2>
+        <p class="fav-desc">Danh sách những chiếc xe bạn đang quan tâm.</p>
+    </div>
+
+    @if (Model.Count() == 0)
+    {
+        <div class="empty-state">
+            <i class="far fa-heart empty-icon"></i>
+            <h3>Danh sách trống!</h3>
+            <p>Bạn chưa yêu thích chiếc xe nào.</p>
+            <a href="/" class="btn-home">Tìm xe ngay</a>
+        </div>
+    }
+    else
+    {
+        <div class="fav-grid">
+            @foreach (var item in Model)
+            {
+                var xe = item.MaXeNavigation;
+
+                <div class="fav-card" id="card-xe-@xe.MaXe">
+                    <button class="btn-remove-fav" onclick="removeFav(@xe.MaXe)" title="Bỏ thích">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <span class="car-type-badge">
+                        @xe.MaLoaiNavigation?.TenLoai
+                    </span>
+
+                    <div class="fav-img-wrap" style="position: relative;">
+                        @if (xe.HinhAnhXes?.FirstOrDefault() != null)
+                        {
+                            <img src="@xe.HinhAnhXes.FirstOrDefault().DuongDan" class="fav-img" alt="Ảnh xe" />
+                        }
+                        else
+                        {
+                            <img src="/images/no-image.jpg" class="fav-img" alt="Không có ảnh" />
+                        }
+
+                        @if (xe.TrangThai == "Đang thuê" || xe.TrangThai == "Đang đi")
+                        {
+                            <span class="status-tag tag-busy">Đang bận</span>
+                        }
+                        else if (xe.TrangThai == "Bảo dưỡng")
+                        {
+                            <span class="status-tag tag-fixing">Bảo dưỡng</span>
+                        }
+                    </div>
+
+                    <div class="fav-body">
+                        <h3 class="fav-name">@xe.TenXe</h3>
+                        <span class="fav-plate">Màu xe: @xe.MauSac</span>
+
+                        <div class="fav-price-row">
+                            <span>Giá thuê:</span>
+                            <span class="price-val">@string.Format("{0:N0}", xe.GiaThueNgay) đ/ngày</span>
+                        </div>
+                    </div>
+
+                    <div class="fav-footer">
+                        @if (xe.TrangThai == "Sẵn sàng")
+                        {
+                            <a href="/Xe/Details/@xe.MaXe" class="btn-book">
+                                Đặt xe ngay
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="btn-disabled">
+                                <i class="fas fa-ban"></i> @xe.TrangThai
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    // Hàm xóa nhanh (Logic giữ nguyên)
+    function removeFav(maXe) {
+        if (!confirm("Bạn muốn bỏ xe này khỏi danh sách yêu thích?")) return;
+
+        fetch('/XeYeuThich/Toggle/' + maXe, {
+            method: 'POST'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Hiệu ứng xóa UI
+                const card = document.getElementById('card-xe-' + maXe);
+
+                // Thu nhỏ và mờ dần
+                card.style.transition = "all 0.4s ease";
+                card.style.opacity = "0";
+                card.style.transform = "scale(0.8)";
+
+                setTimeout(() => {
+                    card.remove();
+                    // Nếu xóa hết thì reload để hiện màn hình trống
+                    if (document.querySelectorAll('.fav-card').length === 0) location.reload();
+                }, 400);
+            } else {
+                alert("Vui lòng đăng nhập lại!");
+            }
+        })
+        .catch(err => console.error(err));
+    }
+</script>

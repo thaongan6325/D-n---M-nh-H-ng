@@ -1,0 +1,126 @@
+﻿@model Vivu_Xe.Models.NguoiDung
+@{
+    ViewData["Title"] = "Hồ sơ của tôi";
+    <link rel="stylesheet" href="~/css/profile.css">
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-box alert-success">
+        <i class="fa-solid fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+@{
+    // LOGIC XỬ LÝ ẢNH AVATAR
+    //Mặc định là ảnh default
+    string avatarSrc = "/images/avatars/default.png";
+
+    //Nếu DB có dữ liệu, dùng luôn đường dẫn trong DB
+    if (!string.IsNullOrEmpty(Model.AnhDaiDien))
+    {
+        avatarSrc = Model.AnhDaiDien;
+    }
+}
+<div class="profile-wrapper">
+
+    <aside class="sidebar-card">
+        <div class="user-info-header">
+            <div class="avatar-wrapper">
+                <img src="@avatarSrc" class="avatar-img" alt="Avatar"
+                     onerror="this.onerror=null; this.src='/images/avatars/default.png';">
+            </div>
+            <h3 class="user-fullname">@Model.HoTen</h3>
+
+            @if (ViewBag.TrangThaiXacThuc == 2)
+            {
+                <span class="status-verified">
+                    <i class="fa-solid fa-circle-check"></i> Đã xác thực
+                </span>
+            }
+            else if (ViewBag.TrangThaiXacThuc == 1)
+            {
+                <span class="status-pending-approval">
+                    <i class="fa-solid fa-hourglass-half"></i> Chờ duyệt
+                </span>
+            }
+            else
+            {
+                <span class="status-unverified">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Chưa xác thực
+                </span>
+            }
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="/Account/Profile" class="active"><i class="fa-regular fa-user"></i> Thông tin tài khoản</a></li>
+            <li><a href="/Account/Verification"><i class="fa-solid fa-id-card"></i> Xác thực giấy tờ</a></li>
+            <li><a href="/Account/Logout" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a></li>
+        </ul>
+    </aside>
+
+    <main class="profile-content">
+        <div class="section-header">
+            <h2 class="section-title">Thông tin cá nhân</h2>
+            <p class="section-desc">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+        </div>
+
+        <form asp-action="UpdateProfile" asp-controller="Account" method="post" enctype="multipart/form-data">
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Email đăng nhập</label>
+                    <input type="text" class="form-control" asp-for="Email" disabled>
+                    <input type="hidden" asp-for="Email" />
+                </div>
+
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" class="form-control" asp-for="HoTen" placeholder="Nhập họ tên" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control" asp-for="SoDienThoai" placeholder="Nhập SĐT">
+                </div>
+
+                <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <input type="text" class="form-control" asp-for="DiaChi" placeholder="Nhập địa chỉ">
+                </div>
+                <div class="form-group">
+                    <label>Số Giấy phép lái xe</label>
+                    <input type="text" class="form-control" name="soGPLX" value="@ViewBag.SoGPLX" placeholder="Nhập số GPLX">
+                </div>
+
+                <div class="form-group">
+                    <label>Số Căn cước công dân</label>
+                    <input type="text" class="form-control" name="soCCCD" value="@ViewBag.SoCCCD" placeholder="Nhập số CCCD">
+                </div>
+                <div class="form-group form-col-full">
+                    <label class="btn-upload-avatar">
+                        <i class="fa-solid fa-camera"></i> Chọn ảnh đại diện mới
+                        <input type="file" name="fileAvatar" class="d-none" accept="image/*" onchange="previewImage(this)">
+                    </label>
+                    <span id="file-name" class="file-name-text"></span>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="btn-save">Lưu thay đổi</button>
+            </div>
+        </form>
+    </main>
+</div>
+
+<script>
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('sidebar-avatar-preview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+            document.getElementById('file-name').innerText = input.files[0].name;
+        }
+    }
+</script>

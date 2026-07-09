@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Vivu_Xe.Models.Xe>
+
+@{
+    ViewData["Title"] = "Kết quả tìm kiếm";
+}
+
+<link rel="stylesheet" href="~/css/search.css" asp-append-version="true" />
+
+<section class="hero-banner hero-search-wrapper">
+    <div class="search-result-container">
+
+        <form class="search-form-flex" asp-action="Search" asp-controller="Booking" method="get">
+
+            <div class="search-field-item">
+                <label>Loại xe</label>
+                <div class="custom-input-group">
+                    <i class="fas fa-car"></i>
+                    <select name="maLoai" class="search-select-field">
+                        <option value="">Tất cả</option>
+                        <!option value="1" @(ViewBag.MaLoai == 1 ? "selected" : "")>Xe 4 chỗ</!option>
+                        <!option value="2" @(ViewBag.MaLoai == 2 ? "selected" : "")>Xe 7 chỗ</!option>
+     
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-field-item">
+                <label>Ngày nhận</label>
+                <div class="custom-input-group">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" name="startDate" class="search-input-field" value="@ViewBag.StartDate" />
+                </div>
+            </div>
+
+            <div class="search-field-item">
+                <label>Ngày trả</label>
+                <div class="custom-input-group">
+                    <i class="fas fa-calendar-check"></i>
+                    <input type="date" name="endDate" class="search-input-field" value="@ViewBag.EndDate" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn-search-submit">TÌM LẠI</button>
+        </form>
+    </div>
+</section>
+
+<section class="car-section">
+    <div class="custom-container">
+
+        <div class="result-header">
+            <h2 class="result-title">KẾT QUẢ TÌM KIẾM</h2>
+            <span class="result-subtitle">Tìm thấy @Model.Count() xe trống lịch</span>
+        </div>
+
+        <div class="car-grid">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    var anhXe = item.HinhAnhXes.FirstOrDefault()?.DuongDan ?? "/images/no-image.jpg";
+
+                    <article class="car-card">
+                        <div class="card-image">
+                            <img src="@anhXe" alt="@item.TenXe" />
+                            @{
+                                var listLiked = ViewBag.LikedCarIds as List<int>;
+                                // Kiểm tra: Nếu list ko null VÀ có chứa ID xe này -> là Đã thích
+                                bool isLiked = listLiked != null && listLiked.Contains(item.MaXe);
+                                // Kiểm tra xem chuỗi nhiên liệu có chứa chữ "Điện" không
+                                bool isElectric = item.NhienLieu != null && item.NhienLieu.Contains("Điện");
+                                string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
+                            }
+                            <button class="btn-favorite @(isLiked ? "active" : "")" onclick="toggleFavorite(@item.MaXe, this)">
+                                <i class="@(isLiked ? "fas" : "far") fa-heart"></i>
+                            </button>
+                            <span class="badge-feature">
+                                <i class="@fuelIcon"></i> @item.NhienLieu
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="car-name">@item.TenXe</h3>
+                            <p>Màu xe: @item.MauSac</p>
+
+                            <div class="car-price-group">
+                                <span class="current-price">@item.GiaThueNgay.ToString("N0")đ/ngày</span>
+                            </div>
+
+                            <div class="car-specs">
+                                <div class="spec-item"><i class="fas fa-cogs"></i> @item.HopSo</div>
+                                <div class="spec-item"><i class="fas fa-car"></i> @item.MaLoaiNavigation?.TenLoai</div>
+                            </div>
+
+                            <a href="/Xe/Details/@item.MaXe" class="btn-book-now">CHỌN XE NÀY</a>
+                        </div>
+                    </article>
+                }
+            }
+            else
+            {
+                <div class="text-center w-100 py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="100" class="mb-3" style="opacity: 0.5" />
+                    <h4 style="color: #666;">Rất tiếc, không tìm thấy xe nào trống trong khoảng thời gian này!</h4>
+                    <p style="color: #999;">Vui lòng thử chọn ngày khác.</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>

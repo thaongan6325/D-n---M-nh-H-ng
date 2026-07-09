@@ -1,0 +1,541 @@
+﻿@model Vivu_Xe.Models.DonDatXe
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.MaDon;
+    var giaThueNgay = Model.MaXeNavigation?.GiaThueNgay ?? 0;
+
+    // --- LOGIC TÍNH TOÁN HIỂN THỊ
+
+    // 1. Tính tổng tiền phạt từ danh sách sự cố
+    decimal tongPhat = 0;
+    if (Model.SuCoPhatSinhs != null && Model.SuCoPhatSinhs.Any())
+    {
+        tongPhat = Model.SuCoPhatSinhs.Sum(s => s.PhiPhat ?? 0);
+    }
+
+    // 2. Lấy số tiền đang lưu trong Database
+    decimal tienLuuTrongDB = Model.TongTien ?? 0;
+
+    //Xác định đâu là Gốc, đâu là Tổng thực
+    decimal tienThueGoc = 0;
+    decimal tongThucThu = 0;
+
+    if (Model.TrangThaiDon == "Hoàn thành" && tongPhat > 0)
+    {
+        // Nếu Tiền trong DB < Tổng tiền phạt
+        if (tienLuuTrongDB < tongPhat)
+        {
+            tienThueGoc = tienLuuTrongDB;
+            tongThucThu = tienLuuTrongDB + tongPhat;
+        }
+        else
+        {
+            // Trường hợp đúng logic DB đã lưu Tổng (Gốc + Phạt)
+            tienThueGoc = tienLuuTrongDB - tongPhat;
+            tongThucThu = tienLuuTrongDB;
+        }
+    }
+    else
+    {
+        // Các trạng thái khác (Chưa hoàn thành hoặc không phạt)
+        tienThueGoc = tienLuuTrongDB;
+        tongThucThu = tienLuuTrongDB;
+    }
+
+    decimal tienDaCoc = Model.TienCocDaDong ?? 0;
+    decimal mucCocXe = Model.MaXeNavigation?.TienCoc ?? 0;
+    decimal tienCanDong = tienThueGoc + mucCocXe - tienDaCoc;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="/Admin/DonDatXe" class="btn btn-secondary shadow-sm">
+        <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách
+    </a>
+
+    <div>
+        @if (Model.TrangThaiDon == "Đã đặt cọc")
+        {
+            <button onclick="ConfirmHandover(@Model.MaDon, @tienThueGoc, @tienDaCoc, @mucCocXe)"
+                    class="btn btn-primary shadow-sm">
+                <i class="fas fa-key me-2"></i> Giao xe ngay
+            </button>
+            <button onclick="CancelOrder(@Model.MaDon)" class="btn btn-danger shadow-sm ms-2">
+                <i class="fas fa-times-circle me-2"></i> Hủy đơn
+            </button>
+        }
+        else if (Model.TrangThaiDon == "Đang đi")
+        {
+            <button onclick="ConfirmReturn(@Model.MaDon, @tienDaCoc)" class="btn btn-success shadow-sm">
+                <i class="fas fa-flag-checkered me-2"></i> Trả xe (Không sự cố)
+            </button>
+
+            <button class="btn btn-warning shadow-sm ms-2" onclick="openModalSuCo()">
+                <i class="fas fa-exclamation-triangle me-2"></i> Trả xe có sự cố
+            </button>
+        }
+        else if (Model.TrangThaiDon == "Hoàn thành")
+        {
+            <span class="badge bg-success p-2 fs-6"><i class="fas fa-check-double"></i> Đơn hàng đã hoàn tất</span>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold"><i class="fas fa-car me-2"></i> Thông tin thuê xe</h6>
+                <span class="badge bg-light text-primary">Mã đơn: #@Model.MaDon</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        @if (Model.MaXeNavigation?.HinhAnhXes?.FirstOrDefault() != null)
+                        {
+                            <img src="@Model.MaXeNavigation.HinhAnhXes.FirstOrDefault().DuongDan" class="img-fluid rounded border shadow-sm" alt="Ảnh xe">
+                        }
+                        else
+                        {
+                            <div class="text-center p-4 bg-light border rounded text-muted">
+                                <i class="fas fa-image fa-2x mb-2"></i><br>Chưa có ảnh
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-8">
+                        <h4 class="font-weight-bold text-gray-800">@Model.MaXeNavigation?.TenXe</h4>
+                        <div class="mb-2">
+                            <span class="badge bg-secondary fs-6"><i class="fas fa-barcode me-1"></i> @Model.MaXeNavigation?.BienSo</span>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <p class="mb-1 text-muted small">NGÀY NHẬN</p>
+                                <p class="fw-bold text-primary">
+                                    <i class="far fa-calendar-alt me-1"></i> @Model.NgayNhanDuKien.ToString("HH:mm dd/MM/yyyy")
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1 text-muted small">NGÀY TRẢ</p>
+                                <p class="fw-bold text-primary">
+                                    <i class="far fa-calendar-check me-1"></i> @Model.NgayTraDuKien.ToString("HH:mm dd/MM/yyyy")
+                                </p>
+                            </div>
+                        </div>
+
+                        @if (Model.NgayTraThucTe != null)
+                        {
+                            <div class="alert alert-success py-2 mt-2 mb-0">
+                                <i class="fas fa-check-circle me-1"></i> Đã trả xe lúc: <strong>@Model.NgayTraThucTe?.ToString("HH:mm dd/MM/yyyy")</strong>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h6 class="font-weight-bold text-gray-800 mb-3">Chi tiết thanh toán</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Đơn giá thuê</td>
+                                <td class="text-end">@giaThueNgay.ToString("N0") đ / ngày</td>
+                            </tr>
+
+                            <tr>
+                                <td>Tiền thuê gốc</td>
+                                <td class="text-end fw-bold">@tienThueGoc.ToString("N0") đ</td>
+                            </tr>
+
+                            @if (Model.SuCoPhatSinhs != null && Model.SuCoPhatSinhs.Any())
+                            {
+                                @foreach (var sc in Model.SuCoPhatSinhs)
+                                {
+                                    <tr class="text-danger">
+                                        <td><i class="fas fa-exclamation-triangle me-1"></i> Phạt: @sc.LoaiSuCo</td>
+                                        <td class="text-end fw-bold">+ @((sc.PhiPhat ?? 0).ToString("N0")) đ</td>
+                                    </tr>
+                                }
+                                <tr class="table-success border-top border-success">
+                                    <td class="align-middle"><strong>TỔNG THỰC THU</strong></td>
+                                    <td class="text-end fw-bold fs-4 text-success">
+                                        @tongThucThu.ToString("N0") đ
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="fw-bold">Tổng tiền thuê</td>
+                                    <td class="text-end fw-bold text-primary fs-5">@tienThueGoc.ToString("N0") đ</td>
+                                </tr>
+                            }
+
+                            <tr>
+                                <td>Mức cọc thế chân (Xe)</td>
+                                <td class="text-end">@mucCocXe.ToString("N0") đ</td>
+                            </tr>
+
+                            @if (Model.TrangThaiDon == "Chờ thanh toán" || Model.TrangThaiDon == "Đã đặt cọc")
+                            {
+                                <tr>
+                                    <td><i class="fas fa-minus-circle text-success me-1"></i> Khách đã cọc trước</td>
+                                    <td class="text-end text-success fw-bold">- @tienDaCoc.ToString("N0") đ</td>
+                                </tr>
+                                <tr class="table-danger border-top border-danger">
+                                    <td class="align-middle">
+                                        <strong>KHÁCH CẦN ĐÓNG THÊM</strong> <br>
+                                        <small class="fst-italic text-muted">(Tiền thuê + Bù cọc còn thiếu)</small>
+                                    </td>
+                                    <td class="text-end text-danger fw-bold fs-4">
+                                        @tienCanDong.ToString("N0") đ
+                                    </td>
+                                </tr>
+                            }
+                            else if (Model.TrangThaiDon == "Đang đi")
+                            {
+                                <tr class="table-light">
+                                    <td colspan="2" class="text-center text-muted fst-italic py-3">
+                                        <i class="fas fa-check-circle text-success me-1"></i>
+                                        Đã thu đủ <strong>@tienThueGoc.ToString("N0")đ</strong> tiền thuê
+                                        & đang giữ cọc <strong>@mucCocXe.ToString("N0")đ</strong>.
+                                    </td>
+                                </tr>
+                            }
+                            else if (Model.TrangThaiDon == "Hoàn thành")
+                            {
+                                <tr>
+                                    <td>Trạng thái cọc</td>
+                                    <td class="text-end text-muted">
+                                        <i class="fas fa-undo me-1"></i> Đã hoàn trả / cấn trừ xong
+                                    </td>
+                                </tr>
+                            }
+                            else if (Model.TrangThaiDon == "Đã hủy")
+                            {
+                                <tr>
+                                    <td colspan="2" class="text-center text-danger fw-bold py-3">
+                                        ĐƠN HÀNG ĐÃ HỦY
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.SuCoPhatSinhs != null && Model.SuCoPhatSinhs.Any())
+        {
+            <div class="card shadow mb-4 border-left-danger">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger"><i class="fas fa-history me-2"></i> Lịch sử sự cố ghi nhận</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-3">Loại lỗi</th>
+                                <th>Chi tiết</th>
+                                <th class="text-end pe-3">Phạt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.SuCoPhatSinhs)
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold">@item.LoaiSuCo</td>
+                                    <td>@item.MoTaChiTiet</td>
+                                    <td class="text-end pe-3 text-danger">@((item.PhiPhat ?? 0).ToString("N0"))đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-user me-2"></i> Khách hàng</h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="bg-gray-200 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-user text-gray-500 fa-2x"></i>
+                    </div>
+                    <h5 class="font-weight-bold text-gray-800">@Model.MaNguoiDungNavigation?.HoTen</h5>
+                    <a href="/Admin/NguoiDung/Details/@Model.MaNguoiDung" target="_blank" class="btn btn-sm btn-outline-info mt-1">
+                        <i class="fas fa-id-card me-1"></i> Xem hồ sơ gốc
+                    </a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><i class="fas fa-phone fa-fw text-muted me-2"></i> Điện thoại</span>
+                        <span class="fw-bold">@Model.MaNguoiDungNavigation?.SoDienThoai</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><i class="fas fa-envelope fa-fw text-muted me-2"></i> Email</span>
+                        <span class="small">@Model.MaNguoiDungNavigation?.Email</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Trạng thái đơn</h6>
+            </div>
+            <div class="card-body text-center">
+                @if (Model.TrangThaiDon == "Chờ thanh toán")
+                {
+                    <div class="alert alert-secondary mb-0 fw-bold">Chờ thanh toán</div>
+                }
+                else if (Model.TrangThaiDon == "Đã đặt cọc")
+                {
+
+                    <div class="alert alert-info mb-0 fw-bold">ĐÃ ĐẶT CỌC</div>
+                }
+                else if (Model.TrangThaiDon == "Đang đi")
+                {
+
+                    <div class="alert alert-primary mb-0 fw-bold">ĐANG HOẠT ĐỘNG</div>
+                }
+                else if (Model.TrangThaiDon == "Đã hủy")
+                {
+
+                    <div class="alert alert-danger mb-0 fw-bold">ĐÃ HỦY</div>
+                }
+                else if (Model.TrangThaiDon == "Hoàn thành")
+                {
+
+                    <div class="alert alert-success mb-0 fw-bold">HOÀN THÀNH</div>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header py-3 bg-warning text-dark">
+                <h6 class="m-0 font-weight-bold"><i class="fas fa-sticky-note me-2"></i> Ghi chú nội bộ</h6>
+            </div>
+            <div class="card-body bg-light">
+                <p class="mb-0 text-dark" style="white-space: pre-line;">
+                    @(string.IsNullOrEmpty(Model.GhiChuNhanVien) ? "Không có ghi chú." : Model.GhiChuNhanVien)
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSuCoDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="formReportDetail" onsubmit="submitFormDetail(event)">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-tools"></i> Báo cáo sự cố & Hoàn tất</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="maDon" value="@Model.MaDon" />
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle"></i> Đơn hàng sẽ chuyển sang <b>Hoàn thành</b>. Cọc sẽ được reset về 0 sau khi trừ phạt.
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6>Danh sách lỗi phát sinh</h6>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addRow()">
+                            <i class="fas fa-plus"></i> Thêm lỗi
+                        </button>
+                    </div>
+
+                    <div id="suCoContainer">
+                        <div class="row mb-2 su-co-item">
+                            <div class="col-4">
+                                <select name="loaiSuCo" class="form-select" required>
+                                    <option value="">-- Loại lỗi --</option>
+                                    <option value="Trầy xước">Trầy xước</option>
+                                    <option value="Móp méo">Móp méo</option>
+                                    <option value="Hư hỏng máy">Hư hỏng máy</option>
+                                    <option value="Vi phạm">Vi phạm luật giao thông</option>
+                                    <option value="Trả muộn">Trả quá giờ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="moTa" class="form-control" placeholder="Mô tả...">
+                            </div>
+                            <div class="col-3">
+                                <input type="number" name="phiPhat" class="form-control" placeholder="Phí phạt" value="0">
+                            </div>
+                            <div class="col-1">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" onclick="submitFormDetail()">
+                        Xác nhận & Hoàn tất
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 1. Script Giao xe
+    function ConfirmHandover(id, tongTienThue, daCocTruoc, yeuCauCocXe) {
+        let thieuCoc = yeuCauCocXe - daCocTruoc;
+        if (thieuCoc < 0) thieuCoc = 0;
+        let tongPhaiThu = tongTienThue + thieuCoc;
+        const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+
+        const msg = `💰 XÁC NHẬN THANH TOÁN KHI GIAO XE:\n\n` +
+                    `1. Tiền thuê xe: ${fmt.format(tongTienThue)}\n` +
+                    `2. Tiền cọc xe: Thu thêm ${fmt.format(thieuCoc)}\n\n` +
+                    `👉 TỔNG TIỀN CẦN THU: ${fmt.format(tongPhaiThu)}\n\n` +
+                    `Xác nhận đã thu đủ tiền và GIAO XE?`;
+
+        if (confirm(msg)) {
+            fetch('/Admin/DonDatXe/Handover/' + id, { method: 'POST' })
+            .then(res => res.json()).then(data => {
+                alert(data.message); location.reload();
+            });
+        }
+    }
+
+    // 2. Script Hoàn tất (Trả xe OK)
+    function ConfirmReturn(id, tienCocDangGiu) {
+        const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+        const msg = `✅ XÁC NHẬN TRẢ XE (KHÔNG SỰ CỐ):\n\n` +
+                    `Hệ thống đang giữ cọc: ${fmt.format(tienCocDangGiu)}\n` +
+                    `👉 VUI LÒNG HOÀN TRẢ LẠI TIỀN CỌC CHO KHÁCH.\n\n` +
+                    `Xác nhận hoàn tất?`;
+        if (confirm(msg)) {
+            fetch('/Admin/DonDatXe/HoanThanh/' + id, { method: 'POST' })
+            .then(res => res.json()).then(data => {
+                alert(data.message); location.reload();
+            });
+        }
+    }
+
+    // 3. Script Hủy đơn
+    function CancelOrder(id) {
+        let reason = prompt("Lý do hủy đơn:", "Khách đổi ý");
+        if (reason) {
+            fetch('/Admin/DonDatXe/CancelOrder?id=' + id + '&lyDo=' + encodeURIComponent(reason), { method: 'POST' })
+            .then(res => res.json()).then(data => {
+                alert(data.message); location.reload();
+            });
+        }
+    }
+
+    function openModalSuCo() {
+        var myModal = new bootstrap.Modal(document.getElementById('modalSuCoDetail'));
+        myModal.show();
+    }
+
+    function addRow() {
+        var html = `
+            <div class="row mb-2 su-co-item">
+                <div class="col-4">
+                    <select name="loaiSuCo" class="form-select" required>
+                        <option value="">-- Loại lỗi --</option>
+                        <option value="Trầy xước">Trầy xước</option>
+                        <option value="Móp méo">Móp méo</option>
+                        <option value="Hư hỏng máy">Hư hỏng máy</option>
+                        <option value="Vi phạm">Vi phạm luật giao thông</option>
+                        <option value="Trả muộn">Trả quá giờ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="moTa" class="form-control" placeholder="Mô tả...">
+                </div>
+                <div class="col-3">
+                    <input type="number" name="phiPhat" class="form-control" placeholder="Phí phạt" value="0">
+                </div>
+                <div class="col-1">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">X</button>
+                </div>
+            </div>`;
+        document.getElementById("suCoContainer").insertAdjacentHTML('beforeend', html);
+    }
+
+    function removeRow(btn) {
+        btn.closest('.su-co-item').remove();
+    }
+    // HÀM XỬ LÝ SUBMIT CHO TRANG DETAIL
+    function submitFormDetail() {
+
+        // --- 1. VALIDATE: Kiểm tra xem đã chọn loại lỗi chưa ---
+        var selects = document.querySelectorAll('select[name="loaiSuCo"]');
+        var hasData = false;
+
+        // Duyệt qua tất cả các dòng xem có dòng nào đã chọn giá trị không
+        selects.forEach(function(sel) {
+            if (sel.value !== "") {
+                hasData = true;
+            }
+        });
+
+        if (!hasData) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa chọn lỗi!',
+                text: 'Vui lòng chọn ít nhất 1 loại sự cố hoặc bấm Hủy.'
+            });
+            return; // Dừng lại, không gửi đi
+        }
+
+        // --- 2. GỬI DỮ LIỆU ---
+        var form = document.getElementById('formReportDetail');
+        var formData = new FormData(form);
+
+        Swal.fire({
+            title: 'Xác nhận hoàn tất?',
+            text: "Đơn hàng sẽ chuyển sang trạng thái Hoàn thành và xe sẽ chuyển sang Bảo dưỡng.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Đồng ý'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                // Hiển thị loading để người dùng biết đang chạy
+                Swal.fire({
+                    title: 'Đang xử lý...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch('/Admin/DonDatXe/ReportIncident', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Thành công!', data.message, 'success')
+                            .then(() => { location.reload(); });
+                    } else {
+                        Swal.fire('Lỗi Server', data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Lỗi kết nối', 'Không thể gọi lên server. Xem Console (F12) để biết chi tiết.', 'error');
+                });
+            }
+        });
+    }
+</script>

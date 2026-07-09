@@ -1,0 +1,340 @@
+﻿@model IEnumerable<Vivu_Xe.Models.DonDatXe>
+
+@{
+    ViewData["Title"] = ViewBag.CurrentStatus ?? "Quản lý Đơn đặt xe";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fa-solid fa-file-invoice-dollar"></i> @ViewData["Title"]
+        </h6>
+        <div class="btn-group btn-group-sm">
+            <a href="/Admin/DonDatXe" class="btn btn-outline-secondary @(string.IsNullOrEmpty(Context.Request.Query["status"]) ? "active" : "")">Tất cả</a>
+            <a href="/Admin/DonDatXe?status=DaDatCoc" class="btn btn-outline-info @(Context.Request.Query["status"] == "DaDatCoc" ? "active" : "")">Chờ giao xe</a>
+            <a href="/Admin/DonDatXe?status=DangDi" class="btn btn-outline-primary @(Context.Request.Query["status"] == "DangDi" ? "active" : "")">Đang thuê</a>
+        </div>
+    </div>
+    <div class="card-body">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách Hàng</th>
+                        <th>Xe Thuê</th>
+                        <th>Lịch Trình</th>
+                        <th>Tổng Tiền</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center fw-bold">#@item.MaDon</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light rounded-circle p-2 me-2 text-primary">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold">@item.MaNguoiDungNavigation?.HoTen</span><br>
+                                        <small class="text-muted"><i class="fas fa-phone-alt"></i> @item.MaNguoiDungNavigation?.SoDienThoai</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-primary">@item.MaXeNavigation?.TenXe</span> <br />
+                                <span class="badge bg-secondary">@item.MaXeNavigation?.BienSo</span>
+                            </td>
+                            <td>
+                                <small><i class="fas fa-calendar-alt text-muted"></i> Nhận: @item.NgayNhanDuKien.ToString("dd/MM/yyyy HH:mm")</small> <br />
+                                <small><i class="fas fa-calendar-check text-muted"></i> Trả: @item.NgayTraDuKien.ToString("dd/MM/yyyy HH:mm")</small>
+                            </td>
+                            <td class="text-end fw-bold text-success">
+                                @(item.TongTien?.ToString("N0") ?? "0") đ
+                            </td>
+
+                            <td class="text-center">
+                                @{
+                                    string badgeClass = "bg-secondary";
+                                    string icon = "fa-circle-question";
+
+                                    switch (item.TrangThaiDon)
+                                    {
+                                        case "Chờ thanh toán": badgeClass = "bg-warning text-dark"; icon = "fa-clock"; break;
+                                        case "Đã đặt cọc": badgeClass = "bg-info text-dark"; icon = "fa-money-bill"; break;
+                                        case "Đang đi": badgeClass = "bg-primary"; icon = "fa-car-side"; break;
+                                        case "Hoàn thành": badgeClass = "bg-success"; icon = "fa-check-circle"; break;
+                                        case "Đã hủy": badgeClass = "bg-danger"; icon = "fa-times-circle"; break;
+                                    }
+                                }
+                                <span class="badge @badgeClass p-2">
+                                    <i class="fa-solid @icon"></i> @item.TrangThaiDon
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Xử lý
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+
+                                        <li>
+                                            <a class="dropdown-item" href="/Admin/DonDatXe/Details/@item.MaDon">
+                                                <i class="fa-solid fa-eye me-2 text-muted"></i> Xem chi tiết
+                                            </a>
+                                        </li>
+
+                                        <li><hr class="dropdown-divider"></li>
+
+                                        @if (item.TrangThaiDon == "Chờ thanh toán")
+                                        {
+                                            <li><a class="dropdown-item text-success" asp-action="DuyetDon" asp-route-id="@item.MaDon"><i class="fa-solid fa-check me-2"></i> Duyệt (Đã cọc)</a></li>
+                                            <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="CancelOrder(@item.MaDon)"><i class="fa-solid fa-ban me-2"></i> Hủy đơn</a></li>
+                                        }
+                                        else if (item.TrangThaiDon == "Đã đặt cọc")
+                                        {
+                                            <li>
+                                                <button class="dropdown-item text-primary fw-bold"
+                                                        onclick="ConfirmHandover(@item.MaDon, @(item.TongTien ?? 0), @(item.TienCocDaDong ?? 0), @(item.MaXeNavigation?.TienCoc ?? 0))">
+                                                    <i class="fa-solid fa-key me-2"></i> Giao xe ngay
+                                                </button>
+                                            </li>
+                                            <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="CancelOrder(@item.MaDon)"><i class="fa-solid fa-ban me-2"></i> Hủy đơn</a></li>
+                                        }
+                                        else if (item.TrangThaiDon == "Đang đi")
+                                        {
+                                            <li>
+                                                <button class="dropdown-item text-success fw-bold"
+                                                        onclick="ConfirmReturn(@item.MaDon, @(item.TienCocDaDong ?? 0))">
+                                                    <i class="fa-solid fa-flag-checkered me-2"></i> Trả xe (OK)
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item text-warning fw-bold"
+                                                        onclick="openModalSuCo(@item.MaDon, '@item.MaXeNavigation?.TenXe')">
+                                                    <i class="fa-solid fa-triangle-exclamation me-2"></i> Trả có sự cố
+                                                </button>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSuCoIndex" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="formReportIndex">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fa-solid fa-car-crash"></i> Báo cáo sự cố & Trả xe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="maDon" id="index_maDon" />
+
+                    <div class="alert alert-warning py-2">
+                        <i class="fa-solid fa-car"></i> Đang xử lý xe: <strong id="displayTenXe">...</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6>Danh sách lỗi phát sinh</h6>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addRowIndex()">
+                            <i class="fas fa-plus"></i> Thêm lỗi
+                        </button>
+                    </div>
+
+                    <div id="suCoContainerIndex">
+                        <div class="row mb-2 su-co-item">
+                            <div class="col-4">
+                                <select name="loaiSuCo" class="form-select" required>
+                                    <option value="">-- Loại lỗi --</option>
+                                    <option value="Trầy xước">Trầy xước</option>
+                                    <option value="Móp méo">Móp méo</option>
+                                    <option value="Hư hỏng máy">Hư hỏng máy</option>
+                                    <option value="Vi phạm">Vi phạm luật giao thông</option>
+                                    <option value="Trả muộn">Trả quá giờ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" name="moTa" class="form-control" placeholder="Mô tả...">
+                            </div>
+                            <div class="col-3">
+                                <input type="number" name="phiPhat" class="form-control" placeholder="Phí phạt" value="0">
+                            </div>
+                            <div class="col-1">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removeRowIndex(this)">X</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+
+                    <button type="button" class="btn btn-danger" onclick="submitFormIndex()">
+                        Xác nhận & Hoàn tất
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // --- 1. Script Modal Sự cố
+    function openModalSuCo(id, tenXe) {
+        document.getElementById('index_maDon').value = id;
+        document.getElementById('displayTenXe').innerText = tenXe;
+        var myModal = new bootstrap.Modal(document.getElementById('modalSuCoIndex'));
+        myModal.show();
+    }
+
+    function addRowIndex() {
+        var html = `
+            <div class="row mb-2 su-co-item">
+                <div class="col-4">
+                    <select name="loaiSuCo" class="form-select" required>
+                        <option value="">-- Loại lỗi --</option>
+                        <option value="Trầy xước">Trầy xước</option>
+                        <option value="Móp méo">Móp méo</option>
+                        <option value="Hư hỏng máy">Hư hỏng máy</option>
+                        <option value="Vi phạm">Vi phạm luật giao thông</option>
+                        <option value="Trả muộn">Trả quá giờ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="moTa" class="form-control" placeholder="Mô tả...">
+                </div>
+                <div class="col-3">
+                    <input type="number" name="phiPhat" class="form-control" placeholder="Phí phạt" value="0">
+                </div>
+                <div class="col-1">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRowIndex(this)">X</button>
+                </div>
+            </div>`;
+        document.getElementById("suCoContainerIndex").insertAdjacentHTML('beforeend', html);
+    }
+
+    function submitFormIndex() {
+
+        //Validate dữ liệu
+        var selects = document.querySelectorAll('#suCoContainerIndex select[name="loaiSuCo"]');
+        var hasData = false;
+        selects.forEach(function(sel) { if(sel.value !== "") hasData = true; });
+
+        if (!hasData) {
+            Swal.fire({icon: 'warning', title: 'Chưa chọn lỗi!', text: 'Vui lòng chọn loại sự cố.'});
+            return;
+        }
+
+        var form = document.getElementById('formReportIndex');
+        var formData = new FormData(form);
+        //Gửi
+        Swal.fire({
+            title: 'Xác nhận hoàn tất?',
+            text: "Đơn hàng sẽ chuyển sang trạng thái Hoàn thành và xe sẽ chuyển sang Bảo dưỡng.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Đồng ý'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
+
+                fetch('/Admin/DonDatXe/ReportIncident', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Thành công!', data.message, 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Lỗi', data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Lỗi kết nối', 'Xem console.', 'error');
+                });
+            }
+        });
+    }
+
+    function removeRowIndex(btn) {
+        btn.closest('.su-co-item').remove();
+    }
+
+    // --- 2. Script Giao xe ---
+    function ConfirmHandover(id, tongTienThue, daCocTruoc, yeuCauCocXe) {
+        let thieuCoc = yeuCauCocXe - daCocTruoc;
+        if (thieuCoc < 0) thieuCoc = 0;
+        let tongPhaiThu = tongTienThue + thieuCoc;
+        const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+
+        const msg = `💰 XÁC NHẬN THANH TOÁN:\n\n` +
+                    `👉 TỔNG TIỀN CẦN THU: ${fmt.format(tongPhaiThu)}\n` +
+                    `(Gồm tiền thuê và bù cọc)\n\n` +
+                    `Xác nhận GIAO XE?`;
+
+        if (confirm(msg)) {
+            fetch('/Admin/DonDatXe/Handover/' + id, { method: 'POST' })
+            .then(res => res.json()).then(data => {
+                alert(data.message); location.reload();
+            });
+        }
+    }
+
+    // --- 3. Script Trả xe OK ---
+    function ConfirmReturn(id, tienCocDangGiu) {
+        const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+        const msg = `✅ XÁC NHẬN TRẢ XE:\n\n` +
+                    `👉 HOÀN TRẢ CỌC: ${fmt.format(tienCocDangGiu)}\n\n` +
+                    `Xác nhận hoàn tất đơn hàng?`;
+        if (confirm(msg)) {
+            fetch('/Admin/DonDatXe/HoanThanh/' + id, { method: 'POST' })
+            .then(res => res.json()).then(data => {
+                alert(data.message); location.reload();
+            });
+        }
+    }
+
+    // --- 4. Script Hủy đơn ---
+    function CancelOrder(id) {
+        let reason = prompt("Lý do hủy đơn:", "Khách yêu cầu hủy");
+        if (reason) {
+            fetch('/Admin/DonDatXe/CancelOrder?id=' + id + '&lyDo=' + encodeURIComponent(reason), { method: 'POST' })
+            .then(res => res.json()).then(data => {
+                alert(data.message); location.reload();
+            });
+        }
+    }
+</script>

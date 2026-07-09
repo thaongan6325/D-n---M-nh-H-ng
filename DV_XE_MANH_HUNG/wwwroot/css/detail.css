@@ -1,0 +1,528 @@
+﻿/* =========================================================
+   FILE: wwwroot/css/detail.css
+   MÔ TẢ: CSS sạch cho trang Chi tiết xe (Không dùng Bootstrap)
+   ========================================================= */
+
+/* --- 1. LAYOUT CHÍNH (GRID 2 CỘT) --- */
+.detail-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Cột trái 66% - Cột phải 33% */
+    gap: 40px;
+    margin-top: 30px;
+    margin-bottom: 60px;
+}
+/* Section Breadcrumb riêng cho trang chi tiết (Nền trắng, viền dưới) */
+.detail-breadcrumb-section {
+    padding: 20px 0;
+    margin-bottom: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+/* Căn trái cho breadcrumb */
+.breadcrumb-nav.align-left {
+    justify-content: flex-start;
+}
+
+/* Sidebar dính (Sticky) */
+.sidebar-sticky {
+    position: sticky;
+    top: 20px;
+}
+
+/* Text highlight số giờ */
+.hours-highlight {
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
+/* Text ghi chú nhỏ (Đã bao gồm...) */
+.note-text {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    text-align: right;
+}
+
+/* Text hiển thị lỗi/trống */
+.text-empty {
+    color: #999;
+    font-style: italic;
+}
+
+/* --- 2. CỘT TRÁI: NỘI DUNG --- */
+.left-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- SLIDER HÌNH ẢNH (CAROUSEL) --- */
+.gallery-section {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
+    /* 1. KHÓA CỨNG CHIỀU CAO KHUNG TẠI ĐÂY */
+    height: 480px;
+    background-color: #f0f0f0; /* Màu nền chờ load ảnh */
+}
+
+    /* Khung chứa ảnh */
+    .gallery-section .carousel-inner {
+        position: relative;
+        width: 100%;
+        height: 100%; /* Kế thừa chiều cao 480px */
+        overflow: hidden;
+    }
+
+    /* Ẩn tất cả ảnh mặc định */
+    .gallery-section .carousel-item {
+        display: none;
+        width: 100%;
+        height: 100%; /* Kế thừa chiều cao */
+        transition: transform 0.4s ease-in-out;
+    }
+
+        /* Chỉ hiện ảnh đang active */
+        .gallery-section .carousel-item.active {
+            display: block;
+        }
+
+/* Hình ảnh điền đầy khung */
+.main-image {
+    width: 100%;
+    height: 100%; /* Bắt buộc cao bằng item (480px) */
+    /* 2. FILL KHUNG MÀ KHÔNG BỊ MÉO ẢNH */
+    object-fit: cover;
+    object-position: center; /* Luôn lấy tâm điểm của bức ảnh */
+    display: block;
+}
+
+/* Nút điều hướng Trái / Phải */
+.carousel-control-prev,
+.carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+        background: var(--primary-color); /* Đổi màu xanh khi đưa chuột vào */
+    }
+
+.carousel-control-prev {
+    left: 15px;
+}
+
+.carousel-control-next {
+    right: 15px;
+}
+
+/* Tạo icon mũi tên bằng CSS thuần (Không cần FontAwesome hay Bootstrap Icon) */
+.carousel-control-prev::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+    transform: rotate(-45deg);
+    margin-left: 4px;
+}
+
+.carousel-control-next::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-top: 3px solid #fff;
+    border-right: 3px solid #fff;
+    transform: rotate(45deg);
+    margin-right: 4px;
+}
+
+/* Header & Thông tin */
+.detail-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.car-detail-name {
+    font-size: 30px;
+    font-weight: 800;
+    color: #222;
+    text-transform: uppercase;
+    margin: 0 0 10px 0;
+}
+
+.car-detail-location {
+    color: #666;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .car-detail-location i {
+        color: var(--primary-color);
+    }
+
+/* Nút Yêu thích & Chia sẻ */
+.action-buttons-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.btn-action-small {
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn-action-like {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+    .btn-action-like:hover {
+        background: #fff5f5;
+    }
+
+    .btn-action-like.active {
+        background: #dc3545;
+        color: #fff;
+    }
+
+.btn-action-share {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+    .btn-action-share:hover {
+        background: #f0f8ff;
+    }
+
+/* --- CSS CHO NÚT ĐẶT XE BỊ KHÓA --- */
+/* Class chung cho nút disabled */
+.btn-booking-disabled {
+    background-color: #95a5a6 !important; /* Màu xám */
+    color: #ffffff !important;
+    border: none !important;
+    cursor: not-allowed;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    width: 100%;
+    padding: 15px 0; /* Khớp với padding của nút đặt xe thật */
+    font-family: "Roboto", sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 8px; /* Bo góc giống nút thật */
+    transition: none; /* Tắt hiệu ứng hover */
+}
+
+/* Hộp cảnh báo màu vàng bên dưới */
+.booking-unavailable-alert {
+    margin-top: 15px;
+    padding: 12px 15px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    border-radius: 8px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+    .booking-unavailable-alert i {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+/* Grid Thông số (4 ô) */
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.spec-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+    .spec-box i {
+        font-size: 22px;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+    }
+
+.spec-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+.spec-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* Nội dung bài viết */
+.content-block {
+    margin-bottom: 40px;
+}
+
+.section-heading {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 15px;
+    position: relative;
+    padding-left: 15px;
+}
+
+    .section-heading::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 4px;
+        height: 20px;
+        width: 4px;
+        background: var(--primary-color);
+        border-radius: 4px;
+    }
+
+.text-content {
+    line-height: 1.6;
+    color: #444;
+    font-size: 15px;
+}
+
+/* List & Table */
+.custom-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .custom-list li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 8px;
+    }
+
+        .custom-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1;
+            top: -1px;
+        }
+
+.policy-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .policy-table th {
+        background: #f4f6f8;
+        font-weight: 700;
+        color: #333;
+        text-align: left;
+        padding: 12px 15px;
+    }
+
+    .policy-table td {
+        border-bottom: 1px solid #eee;
+        padding: 12px 15px;
+        color: #555;
+    }
+
+.icon-check {
+    color: #28a745;
+    margin-right: 5px;
+}
+
+.icon-cross {
+    color: #dc3545;
+    margin-right: 5px;
+}
+
+
+/* --- 3. CỘT PHẢI: SIDEBAR (QUAN TRỌNG) --- */
+
+/* Style chung cho các Box */
+.sidebar-box {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border: 1px solid #eee;
+    margin-bottom: 20px; /* Cách nhau ra */
+}
+
+.booking-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Phần Lịch trình */
+.date-group {
+    margin-bottom: 15px;
+}
+
+.date-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.custom-date-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+    transition: border 0.3s;
+    background: #f9f9f9;
+}
+
+    .custom-date-input:focus {
+        border-color: var(--primary-color);
+        background: #fff;
+    }
+
+/* Phần Thanh toán */
+.bill-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #555;
+}
+
+.bill-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.bill-divider {
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
+
+.total-payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.total-payment-label {
+    font-size: 16px;
+    font-weight: 800;
+    color: #333;
+}
+
+.total-payment-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* --- NÚT ĐẶT XE (MỚI THÊM) --- */
+.btn-booking-main {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+
+/* Style nút màu xanh đặc (Primary) */
+.btn-primary-solid {
+    background-color: var(--primary-color); /* Màu xanh Vivu Xe */
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(3, 95, 165, 0.3); /* Bóng đổ nhẹ */
+}
+
+    .btn-primary-solid:hover {
+        background-color: #024b85; /* Đậm hơn khi hover */
+        transform: translateY(-2px); /* Nổi lên nhẹ */
+        box-shadow: 0 6px 15px rgba(3, 95, 165, 0.4);
+    }
+
+
+/* Responsive Mobile */
+@media (max-width: 900px) {
+    .detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .specs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sidebar-box {
+        position: static;
+    }
+}

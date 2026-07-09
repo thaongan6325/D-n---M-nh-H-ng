@@ -1,0 +1,463 @@
+﻿/* --- BỔ SUNG BIẾN MÀU (Nếu file gốc chưa có màu cam) --- */
+:root {
+    --accent-color: #ff9900; /* Màu cam điểm nhấn của Vivu Xe */
+    --border-color: #e0e0e0;
+}
+
+/* --- LAYOUT CHUNG CHO TRANG PROFILE --- */
+.profile-wrapper {
+    display: flex;
+    gap: 30px; /* Khoảng cách giữa Sidebar và Nội dung chính */
+    padding-bottom: 50px;
+    max-width: 1200px; /* Giới hạn chiều rộng */
+    margin: 0 auto; /* Căn giữa màn hình */
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* --- CỘT TRÁI (SIDEBAR) --- */
+.sidebar-card {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: var(--bg-white);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    height: fit-content; /* Chiều cao vừa đủ nội dung */
+}
+
+/* Phần User Info ở trên cùng Sidebar */
+.user-info-header {
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(to bottom, #f8f9fa, #fff);
+}
+
+.avatar-wrapper {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px;
+    position: relative;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color); /* Dùng màu Xanh của bạn */
+    padding: 2px;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-fullname {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+.status-verified {
+    color: #28a745;
+    background-color: #d4edda;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Trạng thái 2: Chờ duyệt (Xanh dương) */
+.status-pending-approval {
+    color: #0d6efd;
+    background-color: #cfe2ff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Trạng thái 3: Chưa xác thực / Thiếu giấy tờ (Vàng cam) */
+.status-unverified {
+    color: #856404;
+    background-color: #fff3cd;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+/* Menu điều hướng */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .sidebar-menu li a {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition); /* Dùng hiệu ứng chuyển động có sẵn */
+        border-left: 4px solid transparent;
+    }
+
+        .sidebar-menu li a i {
+            width: 25px;
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+
+        /* Hiệu ứng Hover & Active */
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background-color: #f0f7ff;
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+            .sidebar-menu li a.active i {
+                color: var(--primary-color);
+            }
+
+        .sidebar-menu li a.text-danger {
+            color: #dc3545;
+            border-top: 1px solid var(--border-color);
+        }
+/* --- DANH SÁCH GIẤY TỜ ĐÃ UP --- */
+.doc-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 cột nếu màn hình rộng */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.doc-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    transition: var(--transition);
+}
+
+    .doc-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+
+.doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #eee;
+}
+
+.doc-title {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 15px;
+}
+
+/* Badge trạng thái nhỏ cho từng giấy tờ */
+.badge-status {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.badge-pending {
+    background: #e3f2fd;
+    color: #0d6efd;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Khu vực hiển thị 2 ảnh nhỏ */
+.doc-images {
+    display: flex;
+    gap: 10px;
+}
+
+.doc-thumb {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer; /* Để sau này click vào phóng to nếu muốn */
+}
+
+/* Mobile: 1 cột */
+@media (max-width: 768px) {
+    .doc-list {
+        grid-template-columns: 1fr;
+    }
+}
+/* --- BỔ SUNG CHO TRANG XÁC THỰC (VERIFICATION) --- */
+
+/* 1. Alert Boxes (Thông báo) */
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #bbdefb;
+}
+
+/* 2. Trạng thái xác thực (Sidebar) */
+.status-verified {
+    color: #28a745; /* Màu xanh lá */
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-pending {
+    color: #ffc107; /* Màu vàng cam */
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* 3. Vùng Upload Ảnh */
+.upload-zone {
+    border: 2px dashed #bdd4e7;
+    border-radius: 10px;
+    background-color: #f8fbff;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+    .upload-zone:hover {
+        border-color: var(--primary-color);
+        background-color: #eef6fc;
+    }
+
+/* Nội dung bên trong vùng upload */
+.upload-inner {
+    text-align: center; /* Căn giữa nội dung chữ */
+    z-index: 1; /* Nổi lên trên */
+}
+
+.upload-icon {
+    font-size: 40px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.upload-title {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.upload-hint {
+    font-size: 13px;
+    color: #888;
+}
+
+/* Ảnh xem trước */
+.preview-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #fff;
+    padding: 5px;
+    display: none; /* Mặc định ẩn bằng CSS */
+    z-index: 2;
+}
+
+/* 4. Nút Gửi */
+.btn-submit-verify {
+    width: 100%;
+    margin-top: 20px;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+    .btn-submit-verify:hover {
+        background-color: #024b85;
+    }
+
+/* --- CỘT PHẢI (MAIN CONTENT) --- */
+.profile-content {
+    flex-grow: 1; /* Chiếm hết phần còn lại */
+    background-color: var(--bg-white);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 30px;
+}
+
+.section-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 24px;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+/* --- FORM STYLES --- */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Chia 2 cột đều nhau */
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+    }
+
+/* Input dùng chung */
+.form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(3, 95, 165, 0.1); /* Hiệu ứng focus xanh nhạt */
+    }
+
+    /* Input bị khóa (readonly) */
+    .form-control:disabled {
+        background-color: #e9ecef;
+        color: var(--secondary-color);
+        cursor: not-allowed;
+    }
+
+/* Button Submit */
+.btn-save {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    float: right; /* Đẩy nút sang phải */
+}
+
+    .btn-save:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 153, 0, 0.3);
+    }
+
+/* Nút chọn ảnh (Camera icon) */
+.btn-upload-avatar {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--accent-color);
+    font-weight: 600;
+    font-size: 14px;
+}
+.alert-box {
+    max-width: 1200px;
+    margin: 0 auto 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* 2. Mô tả tiêu đề */
+.section-desc {
+    color: var(--secondary-color);
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+/* 3. Layout Form */
+.form-col-full {
+    grid-column: span 2; /* Để ô upload ảnh chiếm trọn 2 cột */
+}
+
+/* 4. Footer của Form (Chứa nút Lưu) */
+.form-footer {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    text-align: right; /* Đẩy nút sang phải */
+}
+
+/* 5. Tiện ích nhỏ */
+.d-none {
+    display: none; /* Ẩn input file */
+}
+
+.file-name-text {
+    font-size: 13px;
+    color: #666;
+    margin-left: 10px;
+    font-style: italic;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 768px) {
+    .profile-wrapper {
+        flex-direction: column; /* Dọc trên mobile */
+    }
+
+    .sidebar-card {
+        width: 100%;
+    }
+
+    .form-grid-2 {
+        grid-template-columns: 1fr; /* Form thành 1 cột */
+    }
+}

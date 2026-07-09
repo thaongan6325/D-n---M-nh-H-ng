@@ -1,0 +1,160 @@
+﻿@model Vivu_Xe.Models.DonDatXe
+@{
+    ViewData["Title"] = "Thanh toán đơn hàng";
+
+    decimal soTien = ViewBag.SoTienCanDong;
+    string noiDung = ViewBag.NoiDungCK;
+    //DEMO QR Ngân hàng
+    string qrUrl = $"https://img.vietqr.io/image/BIDV-063888999-compact2.jpg?amount={soTien}&addInfo={noiDung}&accountName=CONG TY TNHH MTV VIVU XE";
+}
+
+<link rel="stylesheet" href="~/css/booking.css" asp-append-version="true" />
+
+<div class="booking-page-container">
+
+    <div class="progress-bar">
+        <div class="step completed"><div class="step-icon"><i class="fas fa-search"></i></div><div class="step-text">Tìm xe</div></div>
+        <div class="line completed"></div>
+        <div class="step completed"><div class="step-icon"><i class="fas fa-file-signature"></i></div><div class="step-text">Đặt xe</div></div>
+        <div class="line completed"></div>
+        <div class="step active"><div class="step-icon"><i class="fas fa-qrcode"></i></div><div class="step-text">Thanh toán</div></div>
+        <div class="line"></div>
+        <div class="step"><div class="step-icon"><i class="fas fa-check"></i></div><div class="step-text">Hoàn tất</div></div>
+    </div>
+
+    <div class="payment-container" style="margin-top: 0;">
+        <h2 style="color: var(--primary-color); margin-bottom: 10px;">Thanh toán giữ chỗ</h2>
+        <p style="color: #666;">Vui lòng quét mã QR bên dưới để hoàn tất đặt xe <strong>@Model.MaXeNavigation.TenXe</strong></p>
+
+        <div class="qr-box">
+            <img src="@qrUrl" alt="QR Code Thanh Toán" class="qr-image" />
+        </div>
+
+        <div class="bank-info">
+            <div class="bank-row">
+                <span class="bank-label">Ngân hàng</span>
+                <span class="bank-value">BIDV</span>
+            </div>
+            <div class="bank-row">
+                <span class="bank-label">Chủ tài khoản</span>
+                <span class="bank-value">CONG TY TNHH MTV VIVU XE</span>
+            </div>
+            <div class="bank-row">
+                <span class="bank-label">Số tài khoản</span>
+                <span class="bank-value">063888999</span>
+            </div>
+            <div class="bank-row">
+                <span class="bank-label">Số tiền</span>
+                <span class="bank-value highlight">@soTien.ToString("N0")đ</span>
+            </div>
+            <div class="bank-row">
+                <span class="bank-label">Nội dung CK</span>
+                <span class="bank-value" style="color: #e67e22;">@noiDung</span>
+            </div>
+        </div>
+
+        <p style="font-size: 13px; color: #888; margin-top: 20px; font-style: italic;">
+            * Hệ thống sẽ tự động duyệt đơn sau khi nhận được tiền.
+        </p>
+
+        <button type="button" id="btnConfirmPayment" class="btn-finish" data-id="@Model.MaDon">
+            <i class="fas fa-check-circle" style="margin-right: 8px;"></i> TÔI ĐÃ THANH TOÁN
+        </button>
+        <button type="button" id="btnCancelBooking" class="btn-cancel" data-id="@Model.MaDon">
+            <i class="fas fa-times-circle"></i> TÔI ĐỔI Ý - HỦY ĐƠN
+        </button>
+
+        <a asp-controller="Home" asp-action="Index" class="btn-back">
+            <i class="fas fa-arrow-left"></i> QUAY VỀ
+        </a>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const btn = document.getElementById("btnConfirmPayment");
+
+        btn.addEventListener("click", function() {
+            // Disable nút để tránh spam click
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+
+            // Gửi Request lên Server
+            fetch('/Booking/FinishPayment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ Id: @Model.MaDon })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Nếu Server trả về Success -> Chuyển hướng sang trang Success
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Đã ghi nhận thông tin thanh toán.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = data.redirectUrl;
+                    });
+                } else {
+                    // Nếu lỗi
+                    Swal.fire('Lỗi', data.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa fa-check-circle"></i> TÔI ĐÃ THANH TOÁN';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Lỗi', 'Không thể kết nối đến máy chủ.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-check-circle"></i> TÔI ĐÃ THANH TOÁN';
+            });
+        });
+        const btnCancel = document.getElementById("btnCancelBooking");
+
+        if(btnCancel){
+            btnCancel.addEventListener("click", function(e) {
+                e.preventDefault();
+
+                // Hỏi lại cho chắc
+                if(!confirm("Bạn có chắc chắn muốn HỦY đơn đặt xe này không?")) return;
+
+                const orderId = this.getAttribute("data-id");
+
+                // Hiệu ứng loading
+                const originalText = this.innerHTML;
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang hủy...';
+
+                // Gọi API
+                fetch('/Booking/CancelBooking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Id: parseInt(orderId) })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hủy thành công -> Chuyển về trang chủ hoặc Lịch sử
+                        alert("Đơn hàng đã được hủy.");
+                        window.location.href = "/Home/Index";
+                    } else {
+                        alert(data.message);
+                        // Reset nút
+                        btnCancel.disabled = false;
+                        btnCancel.innerHTML = originalText;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Lỗi kết nối server.");
+                    btnCancel.disabled = false;
+                    btnCancel.innerHTML = originalText;
+                });
+            });
+        }
+    });
+</script>

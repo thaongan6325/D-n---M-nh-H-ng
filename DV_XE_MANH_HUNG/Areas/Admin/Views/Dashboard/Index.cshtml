@@ -1,0 +1,256 @@
+﻿@model Vivu_Xe.Areas.Admin.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Tổng quan hệ thống";
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><i class="fa-solid fa-chart-line"></i> Dashboard Thống Kê</h1>
+    <p class="text-muted">Tổng quan tình hình kinh doanh của Vivu Xe</p>
+</div>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 border-success border-3 border-start border-0">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Tổng Doanh Thu
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @Model.TongDoanhThu.ToString("N0") đ
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300 text-success opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 border-primary border-3 border-start border-0">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Tổng Đơn Hàng
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TongDonHang</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-file-invoice fa-2x text-gray-300 text-primary opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 border-info border-3 border-start border-0">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Xe Đang Rảnh
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                                    @Model.XeDangSanSang / @Model.TongSoXe
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-car fa-2x text-gray-300 text-info opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2 border-warning border-3 border-start border-0">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            @Model.TongCanXuLy Yêu cầu cần làm
+                        </div>
+                        <div class="mt-2" style="font-size: 0.85rem;">
+                            @if (Model.SoUserChoDuyet > 0)
+                            {
+                                <a href="/Admin/NguoiDung?status=cho_duyet" class="text-decoration-none">
+                                    <div class="text-danger fw-bold">
+                                        <i class="fas fa-user-check"></i> @Model.SoUserChoDuyet user chờ duyệt
+                                    </div>
+                                </a>
+                            }
+                            @if (Model.SoDonDaCoc > 0)
+                            {
+                                <a href="/Admin/DonDatXe?status=DaDatCoc" class="text-decoration-none">
+                                    <div class="text-primary fw-bold">
+                                        <i class="fas fa-key"></i> @Model.SoDonDaCoc đơn chờ giao xe
+                                    </div>
+                                </a>
+                            }
+                            @if (Model.TongCanXuLy == 0)
+                            {
+                                <span class="text-muted"><i class="fas fa-check-circle"></i> Đã xử lý hết</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-bell fa-2x text-gray-300 text-warning opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Biểu đồ Doanh thu năm @DateTime.Now.Year</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area" style="position: relative; height: 350px; width: 100%;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Đơn đặt xe mới nhất</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách Hàng</th>
+                        <th>Xe</th>
+                        <th>Ngày Đặt</th>
+                        <th>Tổng Tiền</th>
+                        <th>Trạng Thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.DonHangMoiNhat)
+                    {
+                        <tr>
+                            <td>#@item.MaDon</td>
+                            <td>@item.MaNguoiDungNavigation?.HoTen</td>
+                            <td>@item.MaXeNavigation?.TenXe</td>
+                            <td>@item.NgayDat?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-end text-success fw-bold">@item.TongTien?.ToString("N0") đ</td>
+                            <td class="text-center">
+                                @{
+                                    string badgeClass = "bg-secondary"; // Mặc định là màu xám
+                                    string icon = "fa-circle-question";
+
+                                    switch (item.TrangThaiDon)
+                                    {
+                                        case "Chờ thanh toán":
+                                            badgeClass = "bg-warning text-dark";
+                                            icon = "fa-clock";
+                                            break;
+                                        case "Đã đặt cọc":
+                                            badgeClass = "bg-info text-dark";
+                                            icon = "fa-money-bill";
+                                            break;
+                                        case "Đang đi":
+                                            badgeClass = "bg-primary";
+                                            icon = "fa-car-side";
+                                            break;
+                                        case "Hoàn thành":
+                                            badgeClass = "bg-success";
+                                            icon = "fa-check-circle";
+                                            break;
+                                        case "Đã hủy":
+                                            badgeClass = "bg-danger";
+                                            icon = "fa-times-circle";
+                                            break;
+                                    }
+                                }
+                                <span class="badge @badgeClass p-2">
+                                    <i class="fa-solid @icon"></i> @item.TrangThaiDon
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-3">
+            <a href="/Admin/DonDatXe" class="btn btn-primary btn-sm">Xem tất cả đơn hàng <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+
+            // Lấy dữ liệu mảng 12 tháng từ Controller (ViewBag.ChartData)
+            const dataDoanhThu = @Html.Raw(ViewBag.ChartData != null ? ViewBag.ChartData : "[0,0,0,0,0,0,0,0,0,0,0,0]");
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                             'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: dataDoanhThu,
+                        backgroundColor: 'rgba(78, 115, 223, 0.9)', // Màu xanh đồng bộ với SB Admin
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5 // Bo tròn cột
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if(value >= 1000000) {
+                                        return (value / 1000000) + ' Tr'; // Rút gọn hiển thị (VD: 10 Tr)
+                                    }
+                                    return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' VNĐ';
+                                }
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

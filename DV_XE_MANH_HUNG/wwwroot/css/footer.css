@@ -1,0 +1,182 @@
+﻿/* =========================================================
+   FILE: wwwroot/css/footer.css
+   MÔ TẢ: Định dạng riêng cho Footer (Chân trang)
+   ========================================================= */
+/* Footer */
+.footer-section {
+    background-color: #EDF2F8;
+    color: #000;
+    padding: 30px 0 30px 0;
+}
+    .footer-section .custom-container {
+        color: #000;
+        font-size: 14px;
+        font-family: 'Roboto', sans-serif;
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+.footer-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 40px;
+    width: 100%;
+}
+
+/* --- CỘT 1: THÔNG TIN THƯƠNG HIỆU --- */
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.logo-icon-white {
+    width: 30px;
+    height: 30px;
+    background-image: url('/images/logo-manhhung.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.footer-desc {
+    color: var(--secondary-color);
+    line-height: 1.6;
+    margin-bottom: 25px;
+    max-width: 300px;
+    text-align: justify;
+}
+
+/* Social Icons */
+.social-links {
+    display: flex;
+    gap: 12px;
+}
+
+    .social-links a {
+        width: 40px;
+        height: 40px;
+        background-color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .social-links a:hover {
+            background-color: var(--primary-color); /* Đổi màu xanh khi hover */
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+/* --- CỘT 2, 3, 4: TIÊU ĐỀ & LIST --- */
+.footer-col h3.footer-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+    /* Gạch chân nhỏ dưới tiêu đề */
+    .footer-col h3.footer-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 40px;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+    }
+
+.footer-links, .footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .footer-links li {
+        margin-bottom: 12px;
+    }
+
+    .footer-links a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+
+        .footer-links a:hover {
+            color: #fff;
+            padding-left: 5px; /* Hiệu ứng trượt nhẹ sang phải */
+            color: var(--primary-color);
+        }
+
+    /* --- CỘT LIÊN HỆ --- */
+    .footer-contact li {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 15px;
+        color: var(--secondary-color);
+        line-height: 1.5;
+    }
+
+    .footer-contact i {
+        color: var(--primary-color);
+        font-size: 16px;
+        margin-top: 4px; /* Căn chỉnh icon với dòng chữ đầu tiên */
+    }
+
+.footer-divider {
+    height: 0.5px;
+    background-color: var(--primary-color);
+    width: 30%;
+    margin: 25px 0;
+}
+
+/* --- DÒNG BẢN QUYỀN CUỐI CÙNG --- */
+.footer-bottom {
+    text-align: center; /* Căn giữa chữ */
+    width: 100%;
+}
+
+    .footer-bottom p {
+        margin: 0;
+        font-size: 13px; /* Chữ nhỏ hơn nội dung chính */
+        color: #777; /* Màu xám tối hơn để không gây chú ý quá nhiều */
+        font-weight: 400;
+        letter-spacing: 0.5px;
+    }
+
+/* --- RESPONSIVE (MOBILE & TABLET) --- */
+@media (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr; /* Máy tính bảng: 2 cột */
+    }
+}
+
+@media (max-width: 576px) {
+    .footer-content {
+        grid-template-columns: 1fr; /* Điện thoại: 1 cột */
+        gap: 40px;
+    }
+
+    .footer-logo, .footer-desc {
+        /* Căn giữa trên mobile nếu thích */
+        /* text-align: center; */
+        /* margin: 0 auto 20px; */
+    }
+}

@@ -1,0 +1,390 @@
+﻿/* Container chính */
+.history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* Tiêu đề */
+.history-header {
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+.history-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.history-desc {
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+
+/* Grid Layout cho danh sách xe */
+.booking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Tự động chia cột */
+    gap: 30px;
+}
+
+/* Card Đơn hàng */
+.booking-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+}
+
+    .booking-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+/* Header của Card */
+.card-header {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.order-id {
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Badge Trạng thái (Custom) */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+/* Vàng */
+.status-deposit {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+/* Xanh nhạt */
+.status-active {
+    background-color: #cce5ff;
+    color: #004085;
+}
+/* Xanh dương */
+.status-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+/* Xanh lá */
+.status-cancel {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+/* Đỏ */
+
+/* Body của Card */
+.card-body {
+    padding: 20px;
+    flex-grow: 1; /* Để đẩy footer xuống đáy */
+}
+
+.car-image-wrapper {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    background-color: #eee;
+}
+
+.car-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.car-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+}
+
+.car-plate {
+    font-size: 13px;
+    color: #95a5a6;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* Thông tin ngày tháng */
+.booking-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.info-label {
+    color: #7f8c8d;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 15px 0;
+    border: none;
+}
+
+.total-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #27ae60; /* Màu xanh lá tiền tệ */
+}
+
+/* Footer của Card (Nút bấm) */
+.card-footer {
+    padding: 15px 20px;
+    background-color: #fff;
+    border-top: 1px solid #eee;
+}
+
+.btn-action {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-pay {
+    background-color: #f39c12;
+    color: white;
+}
+
+    .btn-pay:hover {
+        background-color: #d35400;
+    }
+
+.btn-detail {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: 1px solid #ddd;
+}
+
+    .btn-detail:hover {
+        background-color: var(--secondary-color);
+    }
+.btn-done {
+    background-color: green;
+    color: #fff;
+    border: 1px solid #ddd;
+}
+
+    .btn-done:hover {
+        background-color: darkgreen;
+    }
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.empty-img {
+    width: 120px;
+    opacity: 0.6;
+    margin-bottom: 20px;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+    .btn-home:hover {
+        background-color: #2980b9;
+    }
+/* --- 1. Style cho nút Đánh giá mới --- */
+.btn-rate {
+    background-color: #ff9900;
+    color: #fff;
+    border: 1px solid #ff9900;
+}
+
+    .btn-rate:hover {
+        background-color: #fff;
+        color: #ff9900;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 153, 0, 0.3);
+    }
+
+/* --- 2. CSS cho Modal (Popup) --- */
+.modal-overlay {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    z-index: 9999; /* Luôn nổi trên cùng */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Nền đen mờ */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px); /* Hiệu ứng làm mờ nền sau */
+}
+
+.modal-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative;
+    text-align: center;
+    animation: popupFadeIn 0.3s ease-out;
+}
+
+@keyframes popupFadeIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    color: #003366;
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-weight: 700;
+    z-index:99999;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    color: #aaa;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .close-btn:hover {
+        color: #333;
+    }
+
+/* --- 3. Hiệu ứng chọn Sao (Star Rating) --- */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse; /* Đảo ngược để dùng CSS chọn sao trước nó */
+    justify-content: center;
+    margin: 20px 0;
+}
+
+    .star-rating-input input {
+        display: none; /* Ẩn radio button */
+    }
+
+    .star-rating-input label {
+        font-size: 40px;
+        color: #e0e0e0;
+        cursor: pointer;
+        padding: 0 5px;
+        transition: color 0.2s;
+    }
+
+        /* Khi hover hoặc đã chọn: Tô màu vàng */
+        .star-rating-input input:checked ~ label,
+        .star-rating-input label:hover,
+        .star-rating-input label:hover ~ label {
+            color: #ffc107;
+        }
+
+/* --- 4. Form elements trong Modal --- */
+.review-textarea {
+    width: 100%;
+    height: 100px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    resize: none;
+    font-size: 14px;
+}
+
+    .review-textarea:focus {
+        outline: none;
+        border-color: #003366;
+    }
+
+.btn-submit-review {
+    background: linear-gradient(135deg, #003366, #00509e);
+    color: white;
+    padding: 12px 40px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.2s;
+}
+
+    .btn-submit-review:hover {
+        background: #002244;
+        transform: translateY(-2px);
+    }
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    .booking-grid {
+        grid-template-columns: 1fr; /* 1 cột trên mobile */
+    }
+}

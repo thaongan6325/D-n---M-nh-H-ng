@@ -1,0 +1,445 @@
+﻿@model Vivu_Xe.Models.Xe
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = Model.TenXe;
+    var anhDaiDien = Model.HinhAnhXes.FirstOrDefault()?.DuongDan ?? "/images/no-image.jpg";
+
+    bool isElectric = Model.NhienLieu != null && Model.NhienLieu.Contains("Điện");
+    string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
+
+    // Format tiền
+    var giaThue = Model.GiaThueNgay;
+    var tienCoc = Model.TienCoc ?? 5000000;
+}
+
+<link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/detail.css" asp-append-version="true" />
+
+<section class="category-header-section detail-breadcrumb-section">
+    <div class="custom-container">
+        <nav class="breadcrumb-nav align-left">
+            <a href="/" class="breadcrumb-link">Trang chủ</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/Xe" class="breadcrumb-link">Danh sách xe</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">@Model.TenXe</span>
+        </nav>
+    </div>
+</section>
+
+<div class="custom-container">
+    <div class="detail-layout">
+
+        <div class="left-col">
+            <div class="gallery-section">
+                <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @if (Model.HinhAnhXes != null && Model.HinhAnhXes.Any())
+                        {
+                            var isFirst = true;
+                            foreach (var hinh in Model.HinhAnhXes)
+                            {
+                                <div class="carousel-item @(isFirst ? "active" : "")">
+                                    <img src="@hinh.DuongDan" class="main-image" alt="@Model.TenXe" />
+                                </div>
+                                isFirst = false;
+                            }
+                        }
+                        else
+                        {
+                            <div class="carousel-item active">
+                                <img src="/images/no-image.jpg" class="main-image" alt="Chưa có hình" />
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.HinhAnhXes != null && Model.HinhAnhXes.Count > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev"></button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next"></button>
+                    }
+                </div>
+            </div>
+
+            <div class="detail-header">
+                <h1 class="car-detail-name">@Model.TenXe</h1>
+                <div class="car-detail-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>TP Đà Nẵng (Giao xe tận nơi)</span>
+                </div>
+
+                <div class="action-buttons-group">
+                    <button class="btn-action-small btn-action-like @(ViewBag.IsLiked ? "active" : "")" onclick="toggleFavorite(@Model.MaXe, this)">
+                        <i class="@(ViewBag.IsLiked ? "fas" : "far") fa-heart"></i> Yêu thích
+                    </button>
+                    <button class="btn-action-small btn-action-share">
+                        <i class="fas fa-share-alt"></i> Chia sẻ
+                    </button>
+                </div>
+            </div>
+
+            <div class="specs-grid">
+                <div class="spec-box">
+                    <i class="fas fa-chair"></i>
+                    <span class="spec-label">Số ghế</span>
+                    <span class="spec-value">@Model.MaLoaiNavigation?.TenLoai</span>
+                </div>
+                <div class="spec-box">
+                    <i class="fas fa-cogs"></i>
+                    <span class="spec-label">Truyền động</span>
+                    <span class="spec-value">@Model.HopSo</span>
+                </div>
+                <div class="spec-box">
+                    <i class="@fuelIcon"></i>
+                    <span class="spec-label">Nhiên liệu</span>
+                    <span class="spec-value">@Model.NhienLieu</span>
+                </div>
+                <div class="spec-box">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="spec-label">Tiêu hao</span>
+                    <span class="spec-value">@(isElectric ? "15kW/100km" : "7L/100km")</span>
+                </div>
+            </div>
+
+            <div class="content-block">
+                <h3 class="section-heading">Mô tả</h3>
+                <div class="text-content">
+                    <p><strong>@Model.TenXe</strong> - TRẢI NGHIỆM KHÁC BIỆT</p>
+                    <p>@Model.MoTa</p>
+                    <p>Xe luôn được vệ sinh sạch sẽ, bảo dưỡng định kỳ. Hỗ trợ giao xe tận nơi.</p>
+                </div>
+            </div>
+            <div class="review-container">
+                <h3 class="section-heading">Đánh giá khách hàng</h3>
+                <hr class="divider" />
+
+                <div class="summary-box">
+                    <div class="summary-score">
+                        @ViewBag.DiemTrungBinh.ToString("0.0") / 5
+                    </div>
+
+                    <div class="summary-stars">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            string statusClass = (i <= Math.Round((double)ViewBag.DiemTrungBinh)) ? "active" : "";
+
+                            <i class="fa-solid fa-star star-icon @statusClass"></i>
+                        }
+                    </div>
+
+                    <div class="summary-count">
+                        Dựa trên @ViewBag.TongDanhGia nhận xét
+                    </div>
+                </div>
+
+                <div class="review-list">
+                    @{
+                        var reviews = ViewBag.ListDanhGia as List<Vivu_Xe.Models.DanhGia>;
+                    }
+
+                    @if (reviews != null && reviews.Count > 0)
+                    {
+                        foreach (var item in reviews)
+                        {
+                            // Xử lý logic hiển thị Avatar và Sao
+                            string tenUser = item.MaNguoiDungNavigation?.HoTen ?? "Khách";
+                            string dbImage = item.MaNguoiDungNavigation?.AnhDaiDien;
+                            string avatarSrc;
+                            @if (!string.IsNullOrEmpty(dbImage))
+                            {
+                                avatarSrc = $"/images/avatars/{dbImage}";
+                            }
+                            else
+                            {
+                                avatarSrc = "/images/default.png";
+                            }
+                            int soSaoUser = item.SoSao ?? 0;
+
+                            <div class="review-item">
+                                <img src="@avatarSrc" alt="@tenUser" class="user-avatar"
+                                     onerror="this.onerror=null; this.src='/images/default.png';" />
+                                <div class="review-content">
+                                    <div class="review-header">
+                                        <span class="user-name">@tenUser</span>
+                                        <span class="review-date">
+                                            @(item.NgayDanhGia.HasValue? item.NgayDanhGia.Value.ToString("dd/MM/yyyy") : "")
+                                        </span>
+                                    </div>
+
+                                    <div class="user-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            string statusClass = (i <= soSaoUser) ? "active" : "";
+                                            <i class="fa-solid fa-star star-icon @statusClass"></i>
+                                        }
+                                    </div>
+
+                                    <div class="review-text">
+                                        @item.NhanXet
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            Chưa có đánh giá nào cho chiếc xe này.
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="content-block">
+                <h3 class="section-heading">Điều khoản thuê xe</h3>
+                <div class="text-content">
+                    <ul class="custom-list">
+                        <li>Sử dụng xe đúng mục đích, không chở hàng cấm.</li>
+                        <li>Không cầm cố, thế chấp xe.</li>
+                        <li>Giữ gìn vệ sinh, không hút thuốc.</li>
+                        <li>Tuân thủ luật giao thông.</li>
+                        <li>Hoàn trả xe đúng giờ và nguyên trạng.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-block">
+                <h3 class="section-heading">Chính sách hủy chuyến</h3>
+                <table class="policy-table">
+                    <thead>
+                        <tr>
+                            <th>Quy định hoàn tiền</th>
+                            <th>Ngày thường</th>
+                            <th>Ngày lễ, Tết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="fas fa-check-circle icon-check"></i> Hoàn 100% cọc</td>
+                            <td>Trước ngày nhận trên 10 ngày</td>
+                            <td>Không áp dụng</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-check-circle icon-check"></i> Hoàn 30% cọc</td>
+                            <td>Trước ngày nhận trên 5 ngày</td>
+                            <td>Trước > 30 ngày</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-times-circle icon-cross"></i> Không hoàn cọc</td>
+                            <td>Trong vòng 5 ngày đến ngày nhận xe</td>
+                            <td>Trong vòng 30 ngày</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="right-col">
+
+            <div class="sidebar-box">
+                <h3 class="booking-title">Lịch trình</h3>
+
+                <div class="date-group">
+                    <label class="date-label">Nhận xe</label>
+                    <input type="datetime-local" id="pickupDate" class="custom-date-input"
+                           value="@(ViewBag.StartDate != null ? DateTime.Parse(ViewBag.StartDate).ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+                </div>
+
+                <div class="date-group">
+                    <label class="date-label">Trả xe</label>
+                    <input type="datetime-local" id="returnDate" class="custom-date-input"
+                           value="@(ViewBag.EndDate != null ? DateTime.Parse(ViewBag.EndDate).ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.AddHours(24).ToString("yyyy-MM-ddTHH:mm"))" />
+                </div>
+
+                <p style="text-align: center; margin-top: 10px; font-size: 13px; color: #666;">
+                    Thời gian thuê: <span id="hoursCount" class="hours-highlight">24</span> giờ
+                </p>
+            </div>
+
+            <div class="sidebar-box sidebar-sticky">
+                <h3 class="booking-title">Thanh toán</h3>
+
+                <input type="hidden" id="carId" value="@Model.MaXe" />
+                <input type="hidden" id="basePrice" value="@giaThue" />
+                <input type="hidden" id="depositPrice" value="@tienCoc" />
+                <input type="hidden" id="isLoggedIn" value="@(HttpContextAccessor.HttpContext.Session.GetInt32("UserID") != null ? "true" : "false")" />
+                <input type="hidden" id="isVerified" value="@(ViewBag.IsVerified == true ? "true" : "false")" />
+
+                <div class="bill-row">
+                    <span class="bill-label">Đơn giá giờ</span>
+                    <span class="bill-value">@((giaThue / 24).ToString("N0"))đ/h</span>
+                </div>
+
+                <div class="bill-row">
+                    <span class="bill-label">Phí thuê xe</span>
+                    <span class="bill-value" id="rentalFeeDisplay">0đ</span>
+                </div>
+
+                <div class="bill-row">
+                    <span class="bill-label">Phí dịch vụ & BH</span>
+                    <span class="bill-value" id="insuranceFeeDisplay">0đ</span>
+                </div>
+
+                <div class="bill-divider"></div>
+
+                <div class="bill-row">
+                    <span class="bill-label">Tiền cọc (Hoàn lại)</span>
+                    <span class="bill-value" id="depositDisplay">@tienCoc.ToString("N0")đ</span>
+                </div>
+
+                <div class="bill-divider"></div>
+
+                <div class="total-payment-row">
+                    <span class="total-payment-label">TỔNG CỘNG</span>
+                    <span class="total-payment-value" id="totalDisplay">0đ</span>
+                </div>
+
+                <p class="note-text">(Đã bao gồm phí dịch vụ & Cọc)</p>
+
+                @if (Model.TrangThai == "Sẵn sàng")
+                {
+                    <a href="#" class="btn-booking-main btn-primary-solid">
+                        ĐẶT XE NGAY
+                    </a>
+                }
+                else
+                {
+                    <button type="button" class="btn-booking-main btn-booking-disabled" disabled>
+                        @if (Model.TrangThai == "Đang thuê")
+                        {
+                            <i class="fas fa-car-side"></i> <span>XE ĐANG ĐƯỢC THUÊ</span>
+                        }
+                        else if (Model.TrangThai == "Bảo dưỡng")
+                        {
+                            <i class="fas fa-wrench"></i> <span>ĐANG BẢO DƯỠNG</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-ban"></i> <span>TẠM NGƯNG</span>
+                        }
+                    </button>
+
+                    <div class="booking-unavailable-alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Xe hiện không khả dụng. Vui lòng chọn ngày khác hoặc tham khảo xe tương tự.</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pickupInput = document.getElementById("pickupDate");
+            const returnInput = document.getElementById("returnDate");
+
+            const hoursCountSpan = document.getElementById("hoursCount");
+            const rentalFeeDisplay = document.getElementById("rentalFeeDisplay");
+            const totalDisplay = document.getElementById("totalDisplay");
+            const depositDisplay = document.getElementById("depositDisplay");
+            const btnBooking = document.querySelector(".btn-booking-main");
+
+            const carId = document.getElementById("carId").value;
+            const basePrice = parseFloat(document.getElementById("basePrice").value);
+            const depositPrice = parseFloat(document.getElementById("depositPrice").value);
+
+            const pricePerHour = basePrice / 24;
+
+            function formatVND(amount) {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+            }
+
+            function calculateTotal() {
+                const start = new Date(pickupInput.value);
+                const end = new Date(returnInput.value);
+                const diff = end - start;
+                const hours = Math.ceil(diff / (1000 * 60 * 60));
+
+                if (hours <= 0) {
+                    hoursCountSpan.innerText = "0";
+                    rentalFeeDisplay.innerText = "---";
+                    totalDisplay.innerText = "---";
+                    return;
+                }
+
+                hoursCountSpan.innerText = hours;
+
+                // 1. Tiền thuê
+                const rentalFee = pricePerHour * hours;
+                // tiền bảo hiểm
+                const insuranceFee = rentalFee * 0.1;
+
+                // 2. TỔNG CỘNG
+                const totalAmount = rentalFee + insuranceFee + depositPrice;
+
+                rentalFeeDisplay.innerText = formatVND(rentalFee);
+                if (insuranceFeeDisplay) {
+                    insuranceFeeDisplay.innerText = formatVND(insuranceFee);
+                }
+                totalDisplay.innerText = formatVND(totalAmount);
+                if(depositDisplay) depositDisplay.innerText = formatVND(depositPrice);
+            }
+
+            if (btnBooking) {
+                btnBooking.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const isLoggedIn = document.getElementById("isLoggedIn").value === "true";
+                    if (!isLoggedIn) {
+                        Swal.fire({
+                            title: 'Bạn chưa đăng nhập!',
+                            text: "Vui lòng đăng nhập để tiếp tục.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#035FA5',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Đăng nhập ngay',
+                            cancelButtonText: 'Để sau'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const returnUrl = encodeURIComponent(window.location.pathname);
+                                window.location.href = `/Account/Login?returnUrl=${returnUrl}`;
+                            }
+                        });
+                        return;
+                    }
+
+                    const val = document.getElementById("isVerified").value;
+                    const isVerified = val.toLowerCase() === "true";
+                    if (!isVerified) {
+                        Swal.fire({
+                            title: 'Chưa xác thực hồ sơ!',
+                            text: "Bạn cần cập nhật GPLX và CCCD để đủ điều kiện thuê xe.",
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonColor: '#28a745',
+                            confirmButtonText: 'Cập nhật ngay',
+                            cancelButtonText: 'Đóng'
+                        }).then((result) => {
+                            if (result.isConfirmed) window.location.href = "/Account/Verification";
+                        });
+                        return;
+                    }
+
+                    if (hoursCountSpan.innerText === "0" || hoursCountSpan.innerText === "---") {
+                        Swal.fire('Lỗi thời gian', 'Vui lòng kiểm tra lại ngày nhận trả!', 'error');
+                        return;
+                    }
+
+                    const start = pickupInput.value;
+                    const end = returnInput.value;
+                    window.location.href = `/Booking/Create/${carId}?start=${start}&end=${end}`;
+                });
+            }
+
+            pickupInput.addEventListener("change", calculateTotal);
+            returnInput.addEventListener("change", calculateTotal);
+            calculateTotal();
+        });
+    </script>
+}

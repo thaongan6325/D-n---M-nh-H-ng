@@ -1,0 +1,223 @@
+﻿/* =========================================================
+   FILE: wwwroot/css/category.css
+   MÔ TẢ: CSS riêng cho trang Danh sách xe (Category)
+   ========================================================= */
+
+/* --- 1. BANNER TIÊU ĐỀ TRANG --- */
+.category-header-section {
+    background-color: #f8f9fa; /* Màu xám rất nhạt làm nền */
+    padding: 50px 0;
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.category-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin: 0 0 10px 0; /* Cách dưới 10px */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Breadcrumb (Đường dẫn: Trang chủ / Danh sách xe) */
+.breadcrumb-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #888;
+}
+
+.breadcrumb-link {
+    text-decoration: none;
+    color: #999;
+    transition: color 0.3s;
+}
+
+    .breadcrumb-link:hover {
+        color: var(--primary-color);
+    }
+
+.breadcrumb-separator {
+    color: #ccc;
+    font-size: 12px;
+}
+
+.breadcrumb-current {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* --- 2. TRẠNG THÁI KHÔNG CÓ DỮ LIỆU (EMPTY STATE) --- */
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+    width: 100%;
+}
+
+.empty-icon {
+    width: 120px;
+    margin-bottom: 25px;
+    opacity: 0.6; /* Làm mờ ảnh icon */
+}
+
+.empty-title {
+    font-size: 20px;
+    color: #555;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.empty-desc {
+    color: #999;
+    margin-bottom: 30px;
+}
+
+/* Nút quay về dùng style riêng */
+.btn-back-home {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: var(--primary-color);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+    .btn-back-home:hover {
+        background-color: #024b85;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(3, 95, 165, 0.3);
+    }
+.review-container {
+    max-width: 900px;
+    margin-bottom: 40px;
+    font-family: sans-serif;
+    color: #333;
+}
+
+/* 2. Tiêu đề và gạch ngang */
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+/* 3. Khối tổng điểm (Box to ở trên) */
+.summary-box {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.summary-score {
+    font-size: 48px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.summary-count {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 8px;
+}
+
+/* 4. Định dạng chung cho Ngôi sao (FontAwesome) */
+.star-icon {
+    font-size: 18px;
+    color: #e0e0e0; /* Màu xám mặc định (chưa active) */
+    margin-right: 2px;
+}
+
+    /* Class này để kích hoạt màu vàng */
+    .star-icon.active {
+        color: #ffc107;
+    }
+
+/* Riêng phần tổng điểm thì sao to hơn chút */
+.summary-stars .star-icon {
+    font-size: 24px;
+}
+
+/* 5. Danh sách Review (Từng dòng) */
+.review-item {
+    display: flex; /* Flexbox: Avatar trái, Nội dung phải */
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* Avatar tròn tự tạo bằng CSS */
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #34495e;
+    color: #fff;
+    border-radius: 50%;
+    display: flex; /* Căn chữ vào giữa hình tròn */
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 20px;
+    flex-shrink: 0; /* Giữ cứng kích thước, không bị bóp méo */
+}
+img.user-avatar {
+    object-fit: cover; /* Cắt ảnh vừa khung tròn, không bị méo */
+    background-color: #fff; /* Nền trắng nếu ảnh PNG trong suốt */
+}
+
+/* Cột nội dung bên phải avatar */
+.review-content {
+    flex-grow: 1; /* Chiếm hết khoảng trống còn lại */
+}
+
+/* Dòng chứa Tên và Ngày */
+.review-header {
+    display: flex;
+    justify-content: space-between; /* Tên bên trái, Ngày bên phải */
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #888;
+}
+
+.review-text {
+    margin-top: 8px;
+    line-height: 1.5;
+    color: #444;
+}
+
+/* Thông báo khi không có dữ liệu */
+.empty-state {
+    text-align: center;
+    color: #888;
+    padding: 40px;
+    font-style: italic;
+}

@@ -1,0 +1,195 @@
+﻿@model Vivu_Xe.Models.NguoiDung
+@{
+    ViewData["Title"] = "Xác thực giấy tờ";
+    <link rel="stylesheet" href="~/css/profile.css">
+
+    // Logic ảnh đại diện (Sidebar)
+    string avatarSrc = "/images/avatars/default.png";
+    if (!string.IsNullOrEmpty(Model.AnhDaiDien))
+    {
+        avatarSrc = Model.AnhDaiDien.StartsWith("/") ? Model.AnhDaiDien : "/images/avatars/" + Model.AnhDaiDien;
+    }
+
+    // Lấy danh sách giấy tờ từ Controller
+    var listGiayTo = ViewBag.ListGiayTo as List<Vivu_Xe.Models.GiayTo>;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-box alert-success">
+        <i class="fa-solid fa-check-circle"></i> @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert-box alert-error">
+        <i class="fa-solid fa-triangle-exclamation"></i> @TempData["Error"]
+    </div>
+}
+
+<div class="profile-wrapper">
+
+    <aside class="sidebar-card">
+        <div class="user-info-header">
+            <div class="avatar-wrapper">
+                <img src="@avatarSrc" class="avatar-img" alt="Avatar"
+                     onerror="this.onerror=null; this.src='/images/avatars/default.png';">
+            </div>
+            <h3 class="user-fullname">@Model.HoTen</h3>
+
+            @if (ViewBag.TrangThaiXacThuc == 2)
+            {
+                <span class="status-verified">
+                    <i class="fa-solid fa-circle-check"></i> Đã xác thực
+                </span>
+            }
+            else if (ViewBag.TrangThaiXacThuc == 1)
+            {
+                <span class="status-pending-approval">
+                    <i class="fa-solid fa-hourglass-half"></i> Chờ duyệt
+                </span>
+            }
+            else
+            {
+                <span class="status-unverified">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Chưa xác thực
+                </span>
+            }
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="/Account/Profile"><i class="fa-regular fa-user"></i> Thông tin tài khoản</a></li>
+            <li><a href="/Account/Verification" class="active"><i class="fa-solid fa-id-card"></i> Xác thực giấy tờ</a></li>
+            <li><a href="/Account/Logout" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a></li>
+        </ul>
+    </aside>
+
+    <main class="profile-content">
+        <div class="section-header">
+            <h2 class="section-title">Xác thực danh tính</h2>
+            <p class="section-desc">Quản lý hồ sơ pháp lý của bạn.</p>
+        </div>
+
+        @if (listGiayTo != null && listGiayTo.Count > 0)
+        {
+            <h4 style="margin-bottom: 15px; color: #333;">Giấy tờ của tôi</h4>
+            <div class="doc-list">
+                @foreach (var item in listGiayTo)
+                {
+                    <div class="doc-card">
+                        <div class="doc-header">
+                            <span class="doc-title">
+                                @if (item.LoaiGiayTo == "GPLX")
+                                {
+                                    <span><i class="fa-solid fa-id-card"></i> Bằng lái xe</span>
+                                }
+                                else if (item.LoaiGiayTo == "CCCD")
+                                {
+
+                                    <span><i class="fa-solid fa-address-card"></i> Căn cước công dân</span>
+                                }
+                                else
+                                {
+
+                                    @item.LoaiGiayTo
+                                }
+                            </span>
+
+                            @if (item.DaXacThuc == true)
+                            {
+                                <span class="badge-status badge-success">Đã duyệt</span>
+                            }
+                            else
+                            {
+                                <span class="badge-status badge-pending">Chờ duyệt</span>
+                            }
+                        </div>
+
+                        <div class="doc-images">
+                            <div style="text-align:center">
+                                <img src="@item.AnhMatTruoc" class="doc-thumb" onclick="window.open(this.src)" title="Xem ảnh lớn">
+                                <div style="font-size:10px; color:#888; margin-top:2px;">Mặt trước</div>
+                            </div>
+                            <div style="text-align:center">
+                                <img src="@item.AnhMatSau" class="doc-thumb" onclick="window.open(this.src)" title="Xem ảnh lớn">
+                                <div style="font-size:10px; color:#888; margin-top:2px;">Mặt sau</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+        }
+
+        <h4 style="margin-bottom: 15px; color: #333;">Tải lên giấy tờ mới</h4>
+
+        <div class="alert-box alert-info">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Thông tin của bạn được bảo mật tuyệt đối và chỉ dùng cho mục đích thuê xe.</span>
+        </div>
+
+        <form asp-action="UploadDocuments" asp-controller="Account" method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label>Loại giấy tờ</label>
+                <select name="LoaiGiayTo" class="form-control">
+                    <option value="GPLX">Giấy phép lái xe (GPLX)</option>
+                    <option value="CCCD">Căn cước công dân (CCCD)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Hình ảnh giấy tờ (2 mặt)</label>
+
+                <div class="form-grid-2">
+
+                    <div class="upload-zone" onclick="document.getElementById('file-front').click()">
+                        <div id="content-front" class="upload-inner">
+                            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                            <div class="upload-title">Tải ảnh mặt trước</div>
+                            <div class="upload-hint">JPG, PNG tối đa 5MB</div>
+                        </div>
+                        <img id="preview-front" class="preview-img" alt="Mặt trước">
+                        <input type="file" name="MatTruoc" id="file-front" class="d-none" accept="image/*"
+                               onchange="previewDoc(this, 'preview-front', 'content-front')">
+                    </div>
+
+                    <div class="upload-zone" onclick="document.getElementById('file-back').click()">
+                        <div id="content-back" class="upload-inner">
+                            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                            <div class="upload-title">Tải ảnh mặt sau</div>
+                            <div class="upload-hint">JPG, PNG tối đa 5MB</div>
+                        </div>
+                        <img id="preview-back" class="preview-img" alt="Mặt sau">
+                        <input type="file" name="MatSau" id="file-back" class="d-none" accept="image/*"
+                               onchange="previewDoc(this, 'preview-back', 'content-back')">
+                    </div>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit-verify">
+                Gửi xét duyệt
+            </button>
+
+        </form>
+    </main>
+</div>
+
+<script>
+    function previewDoc(input, imgId, contentId) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // 1. Ẩn khối nội dung hướng dẫn
+                document.getElementById(contentId).style.display = 'none';
+                // 2. Hiện ảnh
+                var img = document.getElementById(imgId);
+                img.src = e.target.result;
+                img.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

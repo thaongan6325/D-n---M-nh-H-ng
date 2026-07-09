@@ -1,0 +1,83 @@
+﻿@model Vivu_Xe.Models.TinTuc
+
+@{
+    ViewData["Title"] = Model.TieuDe;
+}
+
+<link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/news.css" asp-append-version="true" />
+
+<section class="news-header-section" style="padding: 30px 0; margin-bottom: 30px;">
+    <div class="custom-container">
+        <nav class="breadcrumb-nav">
+            <a href="/" class="breadcrumb-link">Trang chủ</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/TinTuc" class="breadcrumb-link">Tin tức</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">@Model.DanhMucTin?.TenDanhMuc</span>
+        </nav>
+    </div>
+</section>
+
+<section class="news-section">
+    <div class="custom-container">
+        <div style="width: 100%;">
+            <div class="news-detail-layout">
+
+                <main class="news-detail-main">
+                    <h1 class="detail-title">@Model.TieuDe</h1>
+
+                    <div class="detail-meta">
+                        <span><i class="fas fa-user-edit"></i> @(Model.TacGia?.HoTen ?? "Ban Biên Tập")</span>
+                        <span><i class="fas fa-calendar-alt"></i> @Model.NgayDang?.ToString("dd/MM/yyyy HH:mm")</span>
+                        <span><i class="fas fa-folder-open"></i> @Model.DanhMucTin?.TenDanhMuc</span>
+                        <span><i class="fas fa-eye"></i> @Model.LuotXem lượt xem</span>
+                    </div>
+
+                    <div class="detail-summary">
+                        @Model.TomTat
+                    </div>
+
+                    <div class="ckeditor-content">
+                        @Html.Raw(Model.NoiDung)
+                    </div>
+
+                    <hr style="margin: 40px 0; border-top: 1px dashed #ccc;" />
+
+                    <div style="text-align: right;">
+                        <a href="/TinTuc" class="btn-read-now" style="display: inline-block; padding: 10px 25px;"><i class="fas fa-arrow-left"></i> TRỞ VỀ DANH SÁCH</a>
+                    </div>
+                </main>
+
+                <aside class="news-detail-sidebar">
+                    <h3 class="sidebar-heading">Cùng chuyên mục</h3>
+
+                    @if (ViewBag.TinLienQuan != null)
+                    {
+                        var tinLienQuan = ViewBag.TinLienQuan as IEnumerable<Vivu_Xe.Models.TinTuc>;
+                        if (tinLienQuan != null && tinLienQuan.Any())
+                        {
+                            foreach (var item in tinLienQuan)
+                            {
+                                <div class="related-item">
+                                    <a href="/TinTuc/Details/@item.MaTinTuc" class="related-img">
+                                        <img src="@item.HinhAnhDaiDien" alt="@item.TieuDe" />
+                                    </a>
+                                    <div class="related-info">
+                                        <a href="/TinTuc/Details/@item.MaTinTuc" class="related-title">@item.TieuDe</a>
+                                        <span class="related-date"><i class="far fa-clock"></i> @item.NgayDang?.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted" style="font-size: 14px; font-style: italic;">Chưa có bài viết nào cùng chuyên mục.</p>
+                        }
+                    }
+                </aside>
+
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+    </div>
+}
+
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-image-side" style="background-image: url('/images/bg-login.jpg');">
+            <div class="auth-image-text">
+                <h2>Chào mừng trở lại!</h2>
+                <p>Đăng nhập để tiếp tục những chuyến hành trình tuyệt vời cùng Vivu Xe.</p>
+            </div>
+        </div>
+
+        <div class="auth-form-side">
+            <h3 class="auth-title">Đăng nhập</h3>
+            <p class="auth-subtitle">Vui lòng nhập Email và Mật khẩu của bạn.</p>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success d-flex align-items-center mb-4">
+                    <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger d-flex align-items-center mb-4">
+                    <i class="fas fa-exclamation-circle me-2"></i> @ViewBag.Error
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                <!--Lưu link cũ khi login -->
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+                <div class="form-group">
+                    <label class="form-label-custom">Tên đăng nhập / Email</label>
+                    <div class="position-relative">
+                        <input name="TaiKhoan" type="text" class="form-control-custom" placeholder="Admin nhập tài khoản, Khách nhập Email..." required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label-custom">Mật khẩu</label>
+                    <div class="position-relative">
+                        <input name="MatKhau" type="password" class="form-control-custom" placeholder="Nhập mật khẩu..." required />
+                    </div>
+                </div>
+
+                <div class="auth-options">
+                    <div class="remember-me-group">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Ghi nhớ đăng nhập</label>
+                    </div>
+                    <a href="#" class="forgot-pass-link">Quên mật khẩu?</a>
+                </div>
+
+                <button type="submit" class="btn-auth">Đăng Nhập</button>
+
+                <div class="auth-footer">
+                    <span class="text-muted small">Chưa có tài khoản?</span>
+                    <a asp-action="Register" class="fw-bold text-decoration-none ms-1" style="color: var(--primary-color);">Đăng ký ngay</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

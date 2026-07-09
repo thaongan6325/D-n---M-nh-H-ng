@@ -1,0 +1,152 @@
+﻿
+body {
+    background-color: #f8f9fa;
+}
+
+
+/* Card chính */
+.success-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    padding: 40px;
+    max-width: 600px;
+    margin: 0 auto 50px;
+    text-align: center;
+}
+
+.success-icon-large {
+    font-size: 80px;
+    color: #198754; /* Màu xanh lá cây */
+    margin-bottom: 20px;
+}
+
+.success-title {
+    color: #198754;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.success-desc {
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+/* 3. Box thông tin đơn hàng */
+.order-info-box {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: left;
+    margin-bottom: 30px;
+    border: 1px solid #eee;
+}
+
+.order-id-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.order-id-text {
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+}
+
+.car-info-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.car-thumb {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.car-name {
+    font-weight: 700;
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.rental-time {
+    font-size: 13px;
+    color: #666;
+}
+
+/* 4. List hướng dẫn */
+.guide-list {
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.guide-title {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.guide-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #555;
+    font-size: 14px;
+    align-items: flex-start;
+}
+
+    .guide-item i {
+        color: #007bff;
+        margin-top: 4px;
+        width: 20px;
+    }
+
+/* 5. Nút bấm */
+.btn-action-group {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-home {
+    flex: 1;
+    border: 1px solid #007bff;
+    color: #007bff;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+    .btn-home:hover {
+        background: #f0f7ff;
+    }
+
+.btn-manage {
+    flex: 1;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+    .btn-manage:hover {
+        background: #0056b3;
+        color: #fff;
+    }
+
