@@ -83,13 +83,7 @@
                         </ul>
                     </li>
 
-                    <li>
-                        <a asp-controller="TinTuc" asp-action="Index"
-                           class="nav-link @ActiveClass("TinTuc")">
-                            Tin tức
-                        </a>
-                    </li>
-                    <li><a href="#" class="nav-link">Giới thiệu</a></li>
+                  
 
                     @if (HttpContextAccessor.HttpContext.Session.GetString("UserEmail") != null)
                     {

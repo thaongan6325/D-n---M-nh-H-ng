@@ -28,14 +28,7 @@
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")">
                     <a href="/Admin/Dashboard"><i class="fa-solid fa-chart-line me-2"></i> Thống kê</a>
                 </li>
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMucTin" ? "active" : "")">
-                    <a href="/Admin/DanhMucTin"><i class="fa-solid fa-gear me-2"></i> Danh mục tin</a>
-                </li>
-
-                <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "TinTuc" ? "active" : "")">
-                    <a href="/Admin/TinTuc"><i class="fa-solid fa-newspaper me-2"></i> Tin tức</a>
-                </li>
-
+                
                 <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Xe" ? "active" : "")">
                     <a href="/Admin/Xe"><i class="fa-solid fa-car me-2"></i> Quản lý Xe</a>
                 </li>
