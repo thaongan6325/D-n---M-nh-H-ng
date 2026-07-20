@@ -24,6 +24,7 @@ wwwroot\images\avatars\user.png
 wwwroot\images\avatars\user1.png
 wwwroot\images\banner.jpg
 wwwroot\images\bg-login.jpg
+wwwroot\images\cars\d4138b59-9ded-4ec3-9845-181ccb51babe_images.jpg
 wwwroot\images\crv1.jpg
 wwwroot\images\crv2.jpg
 wwwroot\images\crv3.jpg
@@ -36,6 +37,14 @@ wwwroot\images\documents\doc_10_GPLX_back_767f1d6e-e61c-4b25-ae3e-ab502321e895.w
 wwwroot\images\documents\doc_10_GPLX_back_ff3e82a0-9cee-4f31-8b88-5e55a9e0e944.webp
 wwwroot\images\documents\doc_10_GPLX_front_603e5f22-3918-4edc-a8bc-d4303f7fcc23.webp
 wwwroot\images\documents\doc_10_GPLX_front_f5348ca0-77ac-41a1-ae50-a41760956399.webp
+wwwroot\images\documents\doc_11_CCCD_back_319078fe-3dcd-4f0b-8afc-3e30cc9c7d52.webp
+wwwroot\images\documents\doc_11_CCCD_front_1f811333-a876-4f56-bea7-4ae391943ea8.webp
+wwwroot\images\documents\doc_11_GPLX_back_4d6513d5-e1ba-47ee-9968-1a38a66954fb.webp
+wwwroot\images\documents\doc_11_GPLX_front_61e51501-3773-489c-95ac-d6387b621405.webp
+wwwroot\images\documents\doc_12_CCCD_back_e6c830fc-c3ab-488f-9689-f8ec1e2a6235.webp
+wwwroot\images\documents\doc_12_CCCD_front_a53de23e-3c0d-44ee-a309-c69be0e52723.webp
+wwwroot\images\documents\doc_12_GPLX_back_c15dea6d-2911-43b7-963f-c8ccb982babb.webp
+wwwroot\images\documents\doc_12_GPLX_front_d738c500-6029-4b05-a528-5b413edc14b4.webp
 wwwroot\images\documents\doc_4_CCCD_back_d2a7f513-9a43-4a55-8425-ddfd18a9f360.webp
 wwwroot\images\documents\doc_4_CCCD_front_93a60f63-a5b6-4450-a696-4cf0a457859d.webp
 wwwroot\images\documents\doc_4_GPLX_back_f1bb495b-f5ee-4f6d-9751-c6d894f267c1.webp

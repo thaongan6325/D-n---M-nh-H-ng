@@ -65,16 +65,12 @@
                         <div class="card-image">
                             <img src="@anhXe" alt="@item.TenXe" />
                             @{
-                                var listLiked = ViewBag.LikedCarIds as List<int>;
-                                // Kiểm tra: Nếu list ko null VÀ có chứa ID xe này -> là Đã thích
-                                bool isLiked = listLiked != null && listLiked.Contains(item.MaXe);
+                               
                                 // Kiểm tra xem chuỗi nhiên liệu có chứa chữ "Điện" không
                                 bool isElectric = item.NhienLieu != null && item.NhienLieu.Contains("Điện");
                                 string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
                             }
-                            <button class="btn-favorite @(isLiked ? "active" : "")" onclick="toggleFavorite(@item.MaXe, this)">
-                                <i class="@(isLiked ? "fas" : "far") fa-heart"></i>
-                            </button>
+                            
                             <span class="badge-feature">
                                 <i class="@fuelIcon"></i> @item.NhienLieu
                             </span>

@@ -65,19 +65,9 @@
 
             <div class="detail-header">
                 <h1 class="car-detail-name">@Model.TenXe</h1>
-                <div class="car-detail-location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>TP Đà Nẵng (Giao xe tận nơi)</span>
-                </div>
+                
 
-                <div class="action-buttons-group">
-                    <button class="btn-action-small btn-action-like @(ViewBag.IsLiked ? "active" : "")" onclick="toggleFavorite(@Model.MaXe, this)">
-                        <i class="@(ViewBag.IsLiked ? "fas" : "far") fa-heart"></i> Yêu thích
-                    </button>
-                    <button class="btn-action-small btn-action-share">
-                        <i class="fas fa-share-alt"></i> Chia sẻ
-                    </button>
-                </div>
+               
             </div>
 
             <div class="specs-grid">
@@ -111,86 +101,7 @@
                     <p>Xe luôn được vệ sinh sạch sẽ, bảo dưỡng định kỳ. Hỗ trợ giao xe tận nơi.</p>
                 </div>
             </div>
-            <div class="review-container">
-                <h3 class="section-heading">Đánh giá khách hàng</h3>
-                <hr class="divider" />
-
-                <div class="summary-box">
-                    <div class="summary-score">
-                        @ViewBag.DiemTrungBinh.ToString("0.0") / 5
-                    </div>
-
-                    <div class="summary-stars">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            string statusClass = (i <= Math.Round((double)ViewBag.DiemTrungBinh)) ? "active" : "";
-
-                            <i class="fa-solid fa-star star-icon @statusClass"></i>
-                        }
-                    </div>
-
-                    <div class="summary-count">
-                        Dựa trên @ViewBag.TongDanhGia nhận xét
-                    </div>
-                </div>
-
-                <div class="review-list">
-                    @{
-                        var reviews = ViewBag.ListDanhGia as List<Vivu_Xe.Models.DanhGia>;
-                    }
-
-                    @if (reviews != null && reviews.Count > 0)
-                    {
-                        foreach (var item in reviews)
-                        {
-                            // Xử lý logic hiển thị Avatar và Sao
-                            string tenUser = item.MaNguoiDungNavigation?.HoTen ?? "Khách";
-                            string dbImage = item.MaNguoiDungNavigation?.AnhDaiDien;
-                            string avatarSrc;
-                            @if (!string.IsNullOrEmpty(dbImage))
-                            {
-                                avatarSrc = $"/images/avatars/{dbImage}";
-                            }
-                            else
-                            {
-                                avatarSrc = "/images/default.png";
-                            }
-                            int soSaoUser = item.SoSao ?? 0;
-
-                            <div class="review-item">
-                                <img src="@avatarSrc" alt="@tenUser" class="user-avatar"
-                                     onerror="this.onerror=null; this.src='/images/default.png';" />
-                                <div class="review-content">
-                                    <div class="review-header">
-                                        <span class="user-name">@tenUser</span>
-                                        <span class="review-date">
-                                            @(item.NgayDanhGia.HasValue? item.NgayDanhGia.Value.ToString("dd/MM/yyyy") : "")
-                                        </span>
-                                    </div>
-
-                                    <div class="user-rating">
-                                        @for (int i = 1; i <= 5; i++)
-                                        {
-                                            string statusClass = (i <= soSaoUser) ? "active" : "";
-                                            <i class="fa-solid fa-star star-icon @statusClass"></i>
-                                        }
-                                    </div>
-
-                                    <div class="review-text">
-                                        @item.NhanXet
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="empty-state">
-                            Chưa có đánh giá nào cho chiếc xe này.
-                        </div>
-                    }
-                </div>
-            </div>
+            
             <div class="content-block">
                 <h3 class="section-heading">Điều khoản thuê xe</h3>
                 <div class="text-content">
@@ -204,35 +115,7 @@
                 </div>
             </div>
 
-            <div class="content-block">
-                <h3 class="section-heading">Chính sách hủy chuyến</h3>
-                <table class="policy-table">
-                    <thead>
-                        <tr>
-                            <th>Quy định hoàn tiền</th>
-                            <th>Ngày thường</th>
-                            <th>Ngày lễ, Tết</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><i class="fas fa-check-circle icon-check"></i> Hoàn 100% cọc</td>
-                            <td>Trước ngày nhận trên 10 ngày</td>
-                            <td>Không áp dụng</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-check-circle icon-check"></i> Hoàn 30% cọc</td>
-                            <td>Trước ngày nhận trên 5 ngày</td>
-                            <td>Trước > 30 ngày</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fas fa-times-circle icon-cross"></i> Không hoàn cọc</td>
-                            <td>Trong vòng 5 ngày đến ngày nhận xe</td>
-                            <td>Trong vòng 30 ngày</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            
         </div>
 
         <div class="right-col">

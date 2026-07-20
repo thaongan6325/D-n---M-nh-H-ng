@@ -106,11 +106,7 @@
                                         <i class="fas fa-history menu-icon icon-gray"></i> Lịch sử chuyến đi
                                     </a>
                                 </li>
-                                <li>
-                                    <a asp-controller="XeYeuThich" asp-action="Index" class="dropdown-item">
-                                        <i class="fas fa-heart menu-icon icon-red"></i> Xe yêu thích
-                                    </a>
-                                </li>
+                             
 
                                 @if (HttpContextAccessor.HttpContext.Session.GetInt32("RoleID") == 1 || HttpContextAccessor.HttpContext.Session.GetInt32("RoleID") == 2)
                                 {

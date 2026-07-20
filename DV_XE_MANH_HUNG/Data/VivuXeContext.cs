@@ -37,10 +37,8 @@ public partial class VivuXeContext : DbContext
 
     public virtual DbSet<Xe> Xes { get; set; }
 
-    public virtual DbSet<XeYeuThich> XeYeuThiches { get; set; }
+    
     public virtual DbSet<ThanhToan> ThanhToans { get; set; }
-    public virtual DbSet<DanhMucTin> DanhMucTins { get; set; }
-    public virtual DbSet<TinTuc> TinTucs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Data Source=DESKTOP-VKF78LH;Initial Catalog=VivuXeDB;Integrated Security=True;Encrypt=False");
@@ -239,25 +237,6 @@ public partial class VivuXeContext : DbContext
             entity.HasOne(d => d.MaLoaiNavigation).WithMany(p => p.Xes)
                 .HasForeignKey(d => d.MaLoai)
                 .HasConstraintName("FK__Xe__MaLoai__5BE2A6F2");
-        });
-
-        modelBuilder.Entity<XeYeuThich>(entity =>
-        {
-            entity.HasKey(e => new { e.MaNguoiDung, e.MaXe }).HasName("PK__XeYeuThi__074B856E72A40B82");
-
-            entity.ToTable("XeYeuThich");
-
-            entity.Property(e => e.NgayLuu)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.MaNguoiDungNavigation).WithMany(p => p.XeYeuThiches)
-                .HasForeignKey(d => d.MaNguoiDung)
-                .HasConstraintName("FK__XeYeuThic__MaNgu__2A164134");
-
-            entity.HasOne(d => d.MaXeNavigation).WithMany(p => p.XeYeuThiches)
-                .HasForeignKey(d => d.MaXe)
-                .HasConstraintName("FK__XeYeuThich__MaXe__2B0A656D");
         });
 
         OnModelCreatingPartial(modelBuilder);

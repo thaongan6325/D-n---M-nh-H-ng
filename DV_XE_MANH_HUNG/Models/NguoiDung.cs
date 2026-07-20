@@ -33,5 +33,5 @@ public partial class NguoiDung
 
     public virtual VaiTro? MaVaiTroNavigation { get; set; }
 
-    public virtual ICollection<XeYeuThich> XeYeuThiches { get; set; } = new List<XeYeuThich>();
+   
 }

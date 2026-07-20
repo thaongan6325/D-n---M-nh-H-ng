@@ -38,21 +38,7 @@ namespace Vivu_Xe.Controllers
                                 .Where(x => x.MaLoaiNavigation.TenLoai.ToLower().Contains("chỗ")) // xe 4 chỗ - xe 7 chỗ
                                 .Take(4)
                                 .ToList();
-            // --- LOGIC KIỂM TRA XE ĐÃ THÍCH ---
-            var userId = HttpContext.Session.GetInt32("UserID");
-            var likedCarIds = new List<int>();
-
-            if (userId != null)
-            {
-                // Lấy danh sách ID các xe mà user này đã thích
-                likedCarIds = await _context.XeYeuThiches
-                                    .Where(y => y.MaNguoiDung == userId)
-                                    .Select(y => y.MaXe)
-                                    .ToListAsync();
-            }
-
-            // Truyền danh sách này sang View qua ViewBag
-            ViewBag.LikedCarIds = likedCarIds;
+           
             return View(model);
         }
 
