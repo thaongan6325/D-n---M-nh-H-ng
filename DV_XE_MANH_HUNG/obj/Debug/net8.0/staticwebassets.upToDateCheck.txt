@@ -45,6 +45,10 @@ wwwroot\images\documents\doc_12_CCCD_back_e6c830fc-c3ab-488f-9689-f8ec1e2a6235.w
 wwwroot\images\documents\doc_12_CCCD_front_a53de23e-3c0d-44ee-a309-c69be0e52723.webp
 wwwroot\images\documents\doc_12_GPLX_back_c15dea6d-2911-43b7-963f-c8ccb982babb.webp
 wwwroot\images\documents\doc_12_GPLX_front_d738c500-6029-4b05-a528-5b413edc14b4.webp
+wwwroot\images\documents\doc_13_CCCD_back_4e1761a3-9d86-4606-8fe3-92979a59e57a.png
+wwwroot\images\documents\doc_13_CCCD_front_a235ddc1-1efd-4ccb-aa62-d78ad29f43e9.png
+wwwroot\images\documents\doc_13_GPLX_back_1bc33432-af11-4713-b7de-58c8ceae4a70.jpg
+wwwroot\images\documents\doc_13_GPLX_front_fdaa676a-791b-4fb2-bb82-f4ff7c78ca21.png
 wwwroot\images\documents\doc_4_CCCD_back_d2a7f513-9a43-4a55-8425-ddfd18a9f360.webp
 wwwroot\images\documents\doc_4_CCCD_front_93a60f63-a5b6-4450-a696-4cf0a457859d.webp
 wwwroot\images\documents\doc_4_GPLX_back_f1bb495b-f5ee-4f6d-9751-c6d894f267c1.webp
