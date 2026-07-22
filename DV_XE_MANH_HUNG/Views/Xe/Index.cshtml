@@ -32,16 +32,13 @@
                     bool isElectric = item.NhienLieu != null && item.NhienLieu.Contains("Điện");
                     string fuelIcon = isElectric ? "fas fa-bolt" : "fas fa-gas-pump";
 
-                    var listLiked = ViewBag.LikedCarIds as List<int>;
-                    bool isLiked = listLiked != null && listLiked.Contains(item.MaXe);
+                 
 
                     <article class="car-card">
                         <div class="card-image">
                             <img src="@anhXe" alt="@item.TenXe" />
 
-                            <button class="btn-favorite @(isLiked ? "active" : "")" onclick="toggleFavorite(@item.MaXe, this)">
-                                <i class="@(isLiked ? "fas" : "far") fa-heart"></i>
-                            </button>
+                      
 
                             <span class="badge-feature">
                                 <i class="@fuelIcon"></i> @item.NhienLieu
