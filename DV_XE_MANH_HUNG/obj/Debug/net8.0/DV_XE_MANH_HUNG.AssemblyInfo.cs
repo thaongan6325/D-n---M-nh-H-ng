@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DV_XE_MANH_HUNG")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0fb19e23c81aaa9839a4ba02da0c2fe9b849d790")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3d3f0c29c79dc75ef5b750825eb73ecf61adbb48")]
 [assembly: System.Reflection.AssemblyProductAttribute("DV_XE_MANH_HUNG")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DV_XE_MANH_HUNG")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -107,6 +107,7 @@ namespace Vivu_Xe.Controllers
                 if (coGPLX && coCCCD)
                 {
                     isVerified = true;
+
                 }
             }
 

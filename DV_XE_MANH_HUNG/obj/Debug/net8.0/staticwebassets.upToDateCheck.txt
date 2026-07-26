@@ -24,7 +24,6 @@ wwwroot\images\avatars\user.png
 wwwroot\images\avatars\user1.png
 wwwroot\images\banner.jpg
 wwwroot\images\bg-login.jpg
-wwwroot\images\cars\d4138b59-9ded-4ec3-9845-181ccb51babe_images.jpg
 wwwroot\images\crv1.jpg
 wwwroot\images\crv2.jpg
 wwwroot\images\crv3.jpg
