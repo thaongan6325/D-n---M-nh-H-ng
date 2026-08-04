@@ -1,0 +1,5 @@
+base\BaseTest.class
+tests\VehicleTest.class
+tests\HomePageSmokeTest.class
+tests\LoginTest.class
+tests\SetupTest.class
